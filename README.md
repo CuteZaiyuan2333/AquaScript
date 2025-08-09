@@ -27,6 +27,12 @@ AquaScript/
 └── benchmarks/      # 性能测试脚本
 ```
 
+## 📦 获取AquaScript
+
+### GitHub仓库
+- **仓库地址**: https://github.com/CuteZaiyuan2333/AquaScript
+- **克隆项目**: `git clone https://github.com/CuteZaiyuan2333/AquaScript.git`
+
 ## 快速开始
 
 ### 编译AquaScript代码
