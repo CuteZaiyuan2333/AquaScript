@@ -66,11 +66,11 @@ python vm/optimized_aquavm.py test_files/performance_tests/test_performance.acod
 
 ```aquascript
 # 变量定义
-name = "AquaScript"
-version = 1.0
+var name = "AquaScript"
+var version = 1.0
 
 # 函数定义
-def greet(name):
+func greet(name):
     print("Hello, " + name + "!")
     return name
 

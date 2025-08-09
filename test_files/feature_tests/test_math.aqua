@@ -1,8 +1,8 @@
 # 数学功能测试
 
 # 基本数学运算
-a = 10
-b = 3
+var a = 10
+var b = 3
 
 print("Basic math operations")
 print("a + b = " + str(a + b))
@@ -13,13 +13,13 @@ print("a % b = " + str(a % b))
 print("a ** b = " + str(a ** b))
 
 # 数学函数
-def abs_value(n):
+func abs_value(n):
     if n < 0:
         return -n
     else:
         return n
 
-def max_value(a, b):
+func max_value(a, b):
     if a > b:
         return a
     else:
@@ -29,7 +29,7 @@ print("abs(-5) = " + str(abs_value(-5)))
 print("max(10, 20) = " + str(max_value(10, 20)))
 
 # 计算阶乘
-def factorial(n):
+func factorial(n):
     if n <= 1:
         return 1
     else:

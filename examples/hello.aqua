@@ -1,15 +1,15 @@
 # AquaScript示例程序：Hello World
 
-def greet(name):
+func greet(name):
     if name:
         print("Hello, " + name + "!")
     else:
         print("Hello, World!")
     return True
 
-def calculate(a, b):
-    sum_result = a + b
-    product = a * b
+func calculate(a, b):
+    var sum_result = a + b
+    var product = a * b
     print("Sum: " + str(sum_result))
     print("Product: " + str(product))
     return sum_result
@@ -22,23 +22,23 @@ greet("AquaScript")
 greet("")
 
 # 数学计算
-result = calculate(10, 5)
+var result = calculate(10, 5)
 print("Result: " + str(result))
 
 # 条件语句
-version = 1.0
+var version = 1.0
 if version >= 1.0:
     print("AquaScript is ready!")
 else:
     print("Still in development")
 
 # 变量和表达式
-x = 42
-y = x * 2 + 10
+var x = 42
+var y = x * 2 + 10
 print("x = " + str(x))
 print("y = " + str(y))
 
 # 布尔值
-is_awesome = True
+var is_awesome = True
 if is_awesome:
     print("AquaScript is awesome!")

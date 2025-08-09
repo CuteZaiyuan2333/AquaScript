@@ -2,35 +2,35 @@
 # 一个简单的命令行任务管理程序
 
 # 全局任务列表
-tasks = []
-task_id_counter = 1
+var tasks = []
+var task_id_counter = 1
 
 # 创建任务字典
-def create_task(id, description, completed):
-    task = {}
+func create_task(id, description, completed):
+    var task = {}
     task["id"] = id
     task["description"] = description
     task["completed"] = completed
     return task
 
 # 任务转字符串
-def task_to_string(task):
+func task_to_string(task):
     if task["completed"]:
-        status = "✓"
+        var status = "✓"
     else:
-        status = "○"
+        var status = "○"
     return f"[{task['id']}] {status} {task['description']}"
 
 # 添加新任务
-def add_task(description):
+func add_task(description):
     global task_id_counter
-    task = create_task(task_id_counter, description, False)
+    var task = create_task(task_id_counter, description, False)
     tasks.append(task)
     print(f"已添加任务: {task_to_string(task)}")
     task_id_counter = task_id_counter + 1
 
 # 列出所有任务
-def list_tasks():
+func list_tasks():
     if len(tasks) == 0:
         print("没有任务。")
         return
@@ -42,18 +42,18 @@ def list_tasks():
     print("========================================")
     
     # 统计信息
-    completed_count = 0
+    var completed_count = 0
     for task in tasks:
         if task["completed"]:
             completed_count = completed_count + 1
     
-    total_count = len(tasks)
-    pending_count = total_count - completed_count
+    var total_count = len(tasks)
+    var pending_count = total_count - completed_count
     print(f"总计: {total_count} | 已完成: {completed_count} | 待完成: {pending_count}")
 
 # 标记任务为完成
-def complete_task(task_id):
-    found = False
+func complete_task(task_id):
+    var found = False
     for task in tasks:
         if task["id"] == task_id:
             task["completed"] = True
@@ -65,17 +65,17 @@ def complete_task(task_id):
         print(f"未找到ID为 {task_id} 的任务。")
 
 # 删除任务
-def delete_task(task_id):
-    found_index = -1
+func delete_task(task_id):
+    var found_index = -1
     for i in range(len(tasks)):
         if tasks[i]["id"] == task_id:
             found_index = i
             break
     
     if found_index >= 0:
-        deleted_task = tasks[found_index]
+        var deleted_task = tasks[found_index]
         # 手动删除元素
-        new_tasks = []
+        var new_tasks = []
         for i in range(len(tasks)):
             if i != found_index:
                 new_tasks.append(tasks[i])
@@ -85,7 +85,7 @@ def delete_task(task_id):
         print(f"未找到ID为 {task_id} 的任务。")
 
 # 显示帮助信息
-def show_help():
+func show_help():
     print("AquaScript 任务管理器")
     print("==============================")
     print("可用命令:")
@@ -98,9 +98,9 @@ def show_help():
     print("==============================")
 
 # 字符串分割函数
-def split_string(text, delimiter):
-    parts = []
-    current = ""
+func split_string(text, delimiter):
+    var parts = []
+    var current = ""
     for char in text:
         if char == delimiter:
             if current != "":
@@ -113,9 +113,9 @@ def split_string(text, delimiter):
     return parts
 
 # 解析命令
-def parse_command(input_str):
-    parts = split_string(input_str, " ")
-    command = parts[0]
+func parse_command(input_str):
+    var parts = split_string(input_str, " ")
+    var command = parts[0]
     
     if command == "add":
         if len(parts) < 2:
@@ -123,7 +123,7 @@ def parse_command(input_str):
             return True
         
         # 重新组合描述（处理空格）
-        description = ""
+        var description = ""
         for i in range(1, len(parts)):
             if i > 1:
                 description = description + " "
@@ -139,7 +139,7 @@ def parse_command(input_str):
             print("错误: 请提供任务ID。用法: complete <ID>")
             return True
         
-        task_id = int(parts[1])
+        var task_id = int(parts[1])
         complete_task(task_id)
     
     elif command == "delete":
@@ -147,7 +147,7 @@ def parse_command(input_str):
             print("错误: 请提供任务ID。用法: delete <ID>")
             return True
         
-        task_id = int(parts[1])
+        var task_id = int(parts[1])
         delete_task(task_id)
     
     elif command == "help":
@@ -164,12 +164,12 @@ def parse_command(input_str):
     return True
 
 # 计算器演示函数
-def calculator_demo():
+func calculator_demo():
     print("=== 计算器演示 ===")
     
     # 基本运算
-    a = 15
-    b = 7
+    var a = 15
+    var b = 7
     
     print(f"a = {a}, b = {b}")
     print(f"加法: {a} + {b} = {a + b}")
@@ -179,24 +179,24 @@ def calculator_demo():
     print(f"取余: {a} % {b} = {a % b}")
     
     # 列表操作
-    numbers = [1, 2, 3, 4, 5]
+    var numbers = [1, 2, 3, 4, 5]
     print(f"原始列表: {numbers}")
     
     # 计算总和
-    total = 0
+    var total = 0
     for num in numbers:
         total = total + num
     print(f"列表总和: {total}")
     
     # 查找最大值
-    max_val = numbers[0]
+    var max_val = numbers[0]
     for num in numbers:
         if num > max_val:
             max_val = num
     print(f"最大值: {max_val}")
 
 # 主程序
-def main():
+func main():
     print("欢迎使用 AquaScript 任务管理器！")
     print("")
     
@@ -218,7 +218,7 @@ def main():
     print("")
     
     # 模拟用户输入
-    commands = [
+    var commands = [
         "complete 1",
         "add 编写单元测试",
         "complete 3",
@@ -231,7 +231,7 @@ def main():
     print("模拟用户操作:")
     for cmd in commands:
         print(f"> {cmd}")
-        result = parse_command(cmd)
+        var result = parse_command(cmd)
         print("")
         if not result:
             break
