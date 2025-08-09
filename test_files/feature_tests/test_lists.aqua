@@ -1,0 +1,37 @@
+# 列表功能测试
+
+# 创建列表
+numbers = [1, 2, 3, 4, 5]
+names = ["Alice", "Bob", "Charlie"]
+mixed = [1, "hello", True, 3.14]
+
+print("Numbers:", numbers)
+print("Names:", names)
+print("Mixed:", mixed)
+
+# 列表访问
+print("First number:", numbers[0])
+print("Last name:", names[2])
+
+# 列表长度
+print("Numbers length:", len(numbers))
+print("Names length:", len(names))
+
+# 列表操作
+numbers.append(6)
+print("After append:", numbers)
+
+# 列表遍历
+print("Iterating numbers:")
+for num in numbers:
+    print("Number:", num)
+
+print("Iterating names:")
+for name in names:
+    print("Name:", name)
+
+# 列表推导式（如果支持）
+squares = []
+for i in [1, 2, 3, 4, 5]:
+    squares.append(i * i)
+print("Squares:", squares)

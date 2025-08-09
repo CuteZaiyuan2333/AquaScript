@@ -1,0 +1,22 @@
+# 测试负数处理
+
+func test_negative(x: int) -> str:
+    print("Input value:", x)
+    print("Checking if", x, "> 0")
+    if x > 0:
+        print("Condition is true")
+        return "positive"
+    else:
+        print("Condition is false")
+        return "negative"
+
+# 主程序
+print("=== Testing Negative Numbers ===")
+result1 = test_negative(-5)
+print("Result for -5:", result1)
+
+result2 = test_negative(-10)
+print("Result for -10:", result2)
+
+result3 = test_negative(5)
+print("Result for 5:", result3)

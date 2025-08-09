@@ -1,0 +1,28 @@
+# 调试条件判断
+
+print("=== 条件判断调试 ===")
+
+# 测试基本条件
+var x = 2
+print("x =", x)
+print("x % 2 =", x % 2)
+print("x % 2 == 0 =", x % 2 == 0)
+
+# 测试条件分支
+if x % 2 == 0:
+    print("x 是偶数")
+else:
+    print("x 是奇数")
+
+# 测试另一个数字
+var y = 3
+print("y =", y)
+print("y % 2 =", y % 2)
+print("y % 2 == 0 =", y % 2 == 0)
+
+if y % 2 == 0:
+    print("y 是偶数")
+else:
+    print("y 是奇数")
+
+print("=== 调试完成 ===")

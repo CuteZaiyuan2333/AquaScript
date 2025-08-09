@@ -1,0 +1,17 @@
+# 测试变量赋值
+
+var global_counter: int = 0
+
+func increment_counter() -> int:
+    var local_counter: int = 10
+    global_counter = global_counter + 1
+    local_counter = local_counter + 5
+    print("Global counter:", global_counter)
+    print("Local counter:", local_counter)
+    return local_counter
+
+if __name__ == "__main__":
+    print("Initial global counter:", global_counter)
+    result = increment_counter()
+    print("Final global counter:", global_counter)
+    print("Returned local counter:", result)

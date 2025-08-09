@@ -1,0 +1,27 @@
+# 基本功能测试
+
+# 简单函数测试
+func add_two(a: int, b: int) -> int:
+    return a + b
+
+# 简单条件测试
+func test_condition(x: int) -> str:
+    if x > 0:
+        return "positive"
+    else:
+        return "not positive"
+
+# 简单循环测试
+func count_to_n(n: int) -> int:
+    var i: int = 0
+    var sum: int = 0
+    while i < n:
+        sum = sum + i
+        i = i + 1
+    return sum
+
+# 主程序
+print("Testing add_two(3, 5):", add_two(3, 5))
+print("Testing condition with 10:", test_condition(10))
+print("Testing condition with -5:", test_condition(-5))
+print("Testing count_to_n(5):", count_to_n(5))

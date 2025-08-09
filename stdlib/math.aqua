@@ -1,0 +1,212 @@
+# AquaScript 标准数学库
+# 提供基础数学函数和常量
+
+# 数学常量
+var PI = 3.141592653589793
+var E = 2.718281828459045
+
+# 基础数学函数
+func abs(x):
+    """返回数字的绝对值"""
+    if x < 0:
+        return -x
+    else:
+        return x
+
+func max(a, b):
+    """返回两个数中的较大值"""
+    if a > b:
+        return a
+    else:
+        return b
+
+func min(a, b):
+    """返回两个数中的较小值"""
+    if a < b:
+        return a
+    else:
+        return b
+
+func pow(base, exponent):
+    """计算base的exponent次方"""
+    if exponent == 0:
+        return 1
+    elif exponent == 1:
+        return base
+    else:
+        var result = 1
+        var i = 0
+        while i < exponent:
+            result = result * base
+            i = i + 1
+        return result
+
+func sqrt(x):
+    """计算平方根（使用牛顿法）"""
+    if x < 0:
+        throw "Cannot calculate square root of negative number"
+    
+    if x == 0:
+        return 0
+    
+    var guess = x / 2
+    var epsilon = 0.000001
+    
+    while abs(guess * guess - x) > epsilon:
+        guess = (guess + x / guess) / 2
+    
+    return guess
+
+func factorial(n):
+    """计算阶乘"""
+    if n < 0:
+        throw "Factorial is not defined for negative numbers"
+    
+    if n == 0 or n == 1:
+        return 1
+    
+    var result = 1
+    var i = 2
+    while i <= n:
+        result = result * i
+        i = i + 1
+    
+    return result
+
+func gcd(a, b):
+    """计算最大公约数（欧几里得算法）"""
+    a = abs(a)
+    b = abs(b)
+    
+    while b != 0:
+        var temp = b
+        b = a % b
+        a = temp
+    
+    return a
+
+func lcm(a, b):
+    """计算最小公倍数"""
+    return abs(a * b) / gcd(a, b)
+
+# 三角函数（泰勒级数近似）
+func sin(x):
+    """计算正弦值（弧度）"""
+    # 将x规范化到[-2π, 2π]范围
+    while x > 2 * PI:
+        x = x - 2 * PI
+    while x < -2 * PI:
+        x = x + 2 * PI
+    
+    # 泰勒级数展开
+    var result = 0
+    var term = x
+    var i = 1
+    
+    while abs(term) > 0.000001 and i < 20:
+        result = result + term
+        term = term * (-1) * x * x / ((2 * i) * (2 * i + 1))
+        i = i + 1
+    
+    return result
+
+func cos(x):
+    """计算余弦值（弧度）"""
+    # cos(x) = sin(π/2 - x)
+    return sin(PI / 2 - x)
+
+func tan(x):
+    """计算正切值（弧度）"""
+    var cos_x = cos(x)
+    if abs(cos_x) < 0.000001:
+        throw "Tangent is undefined (division by zero)"
+    return sin(x) / cos_x
+
+# 对数函数（自然对数，使用级数展开）
+func ln(x):
+    """计算自然对数"""
+    if x <= 0:
+        throw "Logarithm is undefined for non-positive numbers"
+    
+    if x == 1:
+        return 0
+    
+    # 使用级数展开 ln(1+u) = u - u²/2 + u³/3 - u⁴/4 + ...
+    # 其中 u = (x-1)/(x+1)
+    var u = (x - 1) / (x + 1)
+    var u_squared = u * u
+    var result = 0
+    var term = u
+    var i = 1
+    
+    while abs(term) > 0.000001 and i < 100:
+        result = result + term / i
+        term = term * u_squared * (-1)
+        i = i + 2
+    
+    return 2 * result
+
+func log10(x):
+    """计算常用对数（以10为底）"""
+    return ln(x) / ln(10)
+
+func log(x, base):
+    """计算以指定底数的对数"""
+    return ln(x) / ln(base)
+
+# 指数函数
+func exp(x):
+    """计算e的x次方"""
+    if x == 0:
+        return 1
+    
+    # 泰勒级数展开 e^x = 1 + x + x²/2! + x³/3! + ...
+    var result = 1
+    var term = 1
+    var i = 1
+    
+    while abs(term) > 0.000001 and i < 100:
+        term = term * x / i
+        result = result + term
+        i = i + 1
+    
+    return result
+
+# 角度转换函数
+func degrees(radians):
+    """将弧度转换为角度"""
+    return radians * 180 / PI
+
+func radians(degrees):
+    """将角度转换为弧度"""
+    return degrees * PI / 180
+
+# 数值判断函数
+func is_even(n):
+    """判断是否为偶数"""
+    return n % 2 == 0
+
+func is_odd(n):
+    """判断是否为奇数"""
+    return n % 2 == 1
+
+func is_prime(n):
+    """判断是否为质数"""
+    if n < 2:
+        return false
+    
+    if n == 2:
+        return true
+    
+    if is_even(n):
+        return false
+    
+    var i = 3
+    while i * i <= n:
+        if n % i == 0:
+            return false
+        i = i + 2
+    
+    return true
+
+print("AquaScript Math Library loaded successfully!")

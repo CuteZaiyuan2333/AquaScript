@@ -1,0 +1,121 @@
+# AquaScript 功能展示程序
+
+print("=== AquaScript 功能展示 ===")
+
+# 1. 变量和基本数据类型
+print("\n1. 变量和数据类型:")
+name = "AquaScript"
+version = 1.0
+is_ready = True
+count = 42
+
+print("语言名称: " + name)
+print("版本: " + str(version))
+print("是否就绪: " + str(is_ready))
+print("计数: " + str(count))
+
+# 2. 数学运算
+print("\n2. 数学运算:")
+a = 15
+b = 4
+
+print("a = " + str(a) + ", b = " + str(b))
+print("加法: " + str(a + b))
+print("减法: " + str(a - b))
+print("乘法: " + str(a * b))
+print("除法: " + str(a / b))
+print("取模: " + str(a % b))
+print("幂运算: " + str(a ** 2))
+
+# 3. 条件语句
+print("\n3. 条件语句:")
+score = 85
+
+if score >= 90:
+    print("成绩等级: A")
+elif score >= 80:
+    print("成绩等级: B")
+elif score >= 70:
+    print("成绩等级: C")
+else:
+    print("成绩等级: D")
+
+# 4. 函数定义和调用
+print("\n4. 函数:")
+
+func greet(person):
+    return "Hello, " + person + "!"
+
+func calculate_area(length, width):
+    return length * width
+
+func factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+print(greet("World"))
+print("矩形面积 (5x3): " + str(calculate_area(5, 3)))
+print("5的阶乘: " + str(factorial(5)))
+
+# 5. 循环
+print("\n5. 循环:")
+
+print("While循环 (1到5):")
+i = 1
+while i <= 5:
+    print("数字: " + str(i))
+    i = i + 1
+
+# 6. 字符串格式化 (f-string)
+print("\n6. 字符串格式化:")
+user = "Alice"
+age = 25
+balance = 1234.56
+
+print(f"用户: {user}")
+print(f"年龄: {age}")
+print(f"余额: {balance}")
+print(f"明年 {user} 将 {age + 1} 岁")
+
+# 7. 复杂计算
+print("\n7. 复杂计算:")
+
+func fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+func is_prime(n):
+    if n < 2:
+        return False
+    i = 2
+    while i * i <= n:
+        if n % i == 0:
+            return False
+        i = i + 1
+    return True
+
+print("斐波那契数列第10项: " + str(fibonacci(10)))
+print("17是质数吗? " + str(is_prime(17)))
+print("18是质数吗? " + str(is_prime(18)))
+
+# 8. 嵌套函数调用
+print("\n8. 嵌套函数调用:")
+
+func max_of_three(a, b, c):
+    func max_of_two(x, y):
+        if x > y:
+            return x
+        else:
+            return y
+    
+    return max_of_two(max_of_two(a, b), c)
+
+result = max_of_three(10, 25, 15)
+print("三个数的最大值: " + str(result))
+
+print("\n=== 展示完成 ===")
+print("AquaScript 功能强大，语法简洁！")

@@ -1,0 +1,13 @@
+# 简化的面向对象测试
+
+class Person:
+    func __init__(self, name: str):
+        self.name = name
+    
+    func greet(self) -> str:
+        return "Hello"
+
+# 创建对象实例
+var person1: Person = Person("Alice")
+var result: str = person1.greet()
+print(result)

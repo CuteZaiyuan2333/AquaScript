@@ -1,0 +1,22 @@
+# 简单条件测试
+
+func test_simple_condition(x: int) -> str:
+    print("Input value:", x)
+    print("Checking if", x, "> 0")
+    if x > 0:
+        print("Condition is true")
+        return "positive"
+    else:
+        print("Condition is false")
+        return "negative"
+
+# 测试
+print("=== Testing Simple Condition ===")
+result1 = test_simple_condition(10)
+print("Result for 10:", result1)
+
+result2 = test_simple_condition(-5)
+print("Result for -5:", result2)
+
+result3 = test_simple_condition(0)
+print("Result for 0:", result3)

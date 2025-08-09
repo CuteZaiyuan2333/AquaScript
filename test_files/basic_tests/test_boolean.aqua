@@ -1,0 +1,14 @@
+# 测试布尔值
+print("测试开始")
+
+# 测试 True
+if True:
+    print("True 条件正确")
+
+# 测试 False  
+if False:
+    print("False 条件错误")
+else:
+    print("False 条件的 else 正确")
+
+print("测试结束")

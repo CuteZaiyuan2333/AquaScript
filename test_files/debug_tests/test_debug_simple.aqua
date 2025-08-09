@@ -1,0 +1,3 @@
+# 最简单的调试测试
+if True:
+    print("True works")

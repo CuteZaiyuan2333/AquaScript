@@ -1,0 +1,20 @@
+# 字典功能测试
+
+# 创建字典
+person = {"name": "Alice", "age": 25, "city": "New York"}
+scores = {"math": 95, "english": 87, "science": 92}
+
+print("Person:", person)
+print("Scores:", scores)
+
+# 字典访问
+print("Name:", person["name"])
+print("Age:", person["age"])
+print("Math score:", scores["math"])
+
+# 字典修改
+person["age"] = 26
+scores["history"] = 89
+
+print("Updated person:", person)
+print("Updated scores:", scores)

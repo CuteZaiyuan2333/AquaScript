@@ -1,0 +1,43 @@
+# 列表推导式测试
+
+print("=== AquaScript 列表推导式功能测试 ===")
+
+# 基础列表推导式
+var numbers = [1, 2, 3, 4, 5]
+print("原始数字列表:", numbers)
+
+# 简单的列表推导式 - 平方
+var squares = [x * x for x in numbers]
+print("平方列表:", squares)
+
+# 带条件的列表推导式 - 偶数的平方
+var even_squares = [x * x for x in numbers if x % 2 == 0]
+print("偶数平方列表:", even_squares)
+
+# 字符串列表推导式
+var words = ["hello", "world", "python", "aqua"]
+print("原始单词列表:", words)
+
+var upper_words = [word.upper() for word in words]
+print("大写单词列表:", upper_words)
+
+# 带条件的字符串列表推导式
+var long_words = [word for word in words if len(word) > 4]
+print("长单词列表:", long_words)
+
+# 数值范围列表推导式
+var range_squares = [i * i for i in range(1, 6)]
+print("范围平方列表:", range_squares)
+
+# 嵌套列表推导式
+var matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+print("原始矩阵:", matrix)
+
+var flattened = [item for row in matrix for item in row]
+print("扁平化列表:", flattened)
+
+# 复杂表达式的列表推导式
+var complex_list = [x * 2 + 1 for x in range(0, 5) if x % 2 == 1]
+print("复杂表达式列表:", complex_list)
+
+print("\n=== 列表推导式测试完成 ===")

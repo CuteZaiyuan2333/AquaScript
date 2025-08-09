@@ -1,0 +1,13 @@
+# 测试全局变量
+
+var name: str = "AquaScript"
+
+func greet(person: str) -> str:
+    return "Hello, " + person + "!"
+
+func main():
+    print("Name: " + name)
+    print(greet(name))
+
+if __name__ == "__main__":
+    main()

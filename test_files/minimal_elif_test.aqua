@@ -1,0 +1,8 @@
+x = 5
+
+if x > 10:
+    print("大于10")
+elif x > 0:
+    print("大于0")
+else:
+    print("其他")

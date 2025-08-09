@@ -1,0 +1,23 @@
+# 基础测试程序
+
+func greet(name):
+    message = "Hello, " + name + "!"
+    print(message)
+
+func calculate():
+    a = 10
+    b = 5
+    result = a + b
+    print("10 + 5 = " + str(result))
+
+func main():
+    print("AquaScript 基础测试")
+    greet("World")
+    calculate()
+    
+    # 测试列表
+    numbers = [1, 2, 3]
+    for num in numbers:
+        print("Number: " + str(num))
+
+main()

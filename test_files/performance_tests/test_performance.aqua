@@ -1,0 +1,29 @@
+# 性能测试 - 斐波那契数列
+
+func fib(n: int) -> int:
+    if n <= 1:
+        return n
+    else:
+        return fib(n - 1) + fib(n - 2)
+
+func test_loop(count: int) -> int:
+    var sum: int = 0
+    var i: int = 0
+    while i < count:
+        sum = sum + i
+        i = i + 1
+    return sum
+
+# 测试递归
+var fib_result: int = fib(20)
+print("Fibonacci(20) =", fib_result)
+
+# 测试循环
+var loop_result: int = test_loop(1000)
+print("Sum(0-999) =", loop_result)
+
+# 测试列表操作
+var numbers = [1, 2, 3, 4, 5]
+print("List:", numbers)
+print("First element:", numbers[0])
+print("List length:", len(numbers))

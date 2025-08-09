@@ -1,0 +1,17 @@
+# 简单列表测试
+
+# 创建空列表
+var empty = []
+print(empty)
+
+# 创建数字列表
+var nums = [1, 2, 3]
+print(nums)
+
+# 访问元素
+print(nums[0])
+print(nums[1])
+
+# 修改元素
+nums[0] = 99
+print(nums)

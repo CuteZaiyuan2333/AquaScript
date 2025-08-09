@@ -1,0 +1,42 @@
+# 高级元组功能测试
+
+print("=== AquaScript 高级元组功能测试 ===")
+
+# 1. 基本元组操作
+var coords = (10, 20)
+print("坐标元组")
+print(coords)
+
+# 2. 元组索引访问
+print("X坐标")
+print(coords[0])
+print("Y坐标")
+print(coords[1])
+
+# 3. 元组作为函数参数
+def process_point(point):
+    print("处理点")
+    print(point)
+    print("X")
+    print(point[0])
+    print("Y")
+    print(point[1])
+
+process_point(coords)
+
+# 4. 元组与字典结合
+var person = {"name": "Alice", "position": (100, 200)}
+
+print("人员信息")
+print(person)
+print("位置")
+print(person["position"])
+
+# 5. 列表包含元组
+var points = [(0, 0), (10, 10), (20, 20)]
+print("点列表")
+print(points)
+print("第一个点")
+print(points[0])
+
+print("=== 高级元组测试完成 ===")

@@ -1,0 +1,43 @@
+# 测试elif功能
+func test_elif(score):
+    if score >= 90:
+        print("优秀")
+    elif score >= 80:
+        print("良好")
+    elif score >= 70:
+        print("中等")
+    elif score >= 60:
+        print("及格")
+    else:
+        print("不及格")
+
+func main():
+    print("=== AquaScript elif功能测试 ===")
+    
+    # 测试不同分数
+    test_elif(95)
+    test_elif(85)
+    test_elif(75)
+    test_elif(65)
+    test_elif(45)
+    
+    # 测试嵌套elif
+    weather = "sunny"
+    temperature = 25
+    
+    if weather == "rainy":
+        print("带雨伞")
+    elif weather == "sunny":
+        if temperature > 30:
+            print("太热了，待在室内")
+        elif temperature > 20:
+            print("天气很好，适合出门")
+        else:
+            print("有点凉，多穿点")
+    else:
+        print("天气一般")
+    
+    print("测试完成")
+
+# 启动程序
+main()

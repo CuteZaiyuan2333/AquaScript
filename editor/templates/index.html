@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaScript 编辑器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <!-- 菜单栏 -->
+        <nav class="menu-bar">
+            <div class="menu-group">
+                <div class="menu-item" onclick="toggleDropdown('file-menu')">
+                    <span>文件(F)</span>
+                    <div id="file-menu" class="dropdown-menu">
+                        <div class="menu-option" onclick="newFile()">
+                            <i class="fas fa-file"></i> 新建文件 <span class="shortcut">Ctrl+N</span>
+                        </div>
+                        <div class="menu-option" onclick="openFile()">
+                            <i class="fas fa-folder-open"></i> 打开文件 <span class="shortcut">Ctrl+O</span>
+                        </div>
+                        <div class="menu-option" onclick="saveFile()">
+                            <i class="fas fa-save"></i> 保存 <span class="shortcut">Ctrl+S</span>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-option" onclick="deleteFile()">
+                            <i class="fas fa-trash"></i> 删除文件
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="menu-item" onclick="toggleDropdown('edit-menu')">
+                    <span>编辑(E)</span>
+                    <div id="edit-menu" class="dropdown-menu">
+                        <div class="menu-option" onclick="undo()">
+                            <i class="fas fa-undo"></i> 撤销 <span class="shortcut">Ctrl+Z</span>
+                        </div>
+                        <div class="menu-option" onclick="redo()">
+                            <i class="fas fa-redo"></i> 重做 <span class="shortcut">Ctrl+Y</span>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-option" onclick="find()">
+                            <i class="fas fa-search"></i> 查找 <span class="shortcut">Ctrl+F</span>
+                        </div>
+                        <div class="menu-option" onclick="replace()">
+                            <i class="fas fa-exchange-alt"></i> 替换 <span class="shortcut">Ctrl+H</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="menu-item" onclick="toggleDropdown('compile-menu')">
+                    <span>编译(C)</span>
+                    <div id="compile-menu" class="dropdown-menu">
+                        <div class="menu-option" onclick="compileCode()">
+                            <i class="fas fa-cog"></i> 编译 <span class="shortcut">F7</span>
+                        </div>
+                        <div class="menu-option" onclick="runCode()">
+                            <i class="fas fa-play"></i> 编译并运行 <span class="shortcut">F5</span>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-option" onclick="clearConsole()">
+                            <i class="fas fa-broom"></i> 清空控制台
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="menu-item" onclick="toggleDropdown('about-menu')">
+                    <span>关于(A)</span>
+                    <div id="about-menu" class="dropdown-menu">
+                        <div class="menu-option" onclick="showHelp()">
+                            <i class="fas fa-question-circle"></i> 帮助文档
+                        </div>
+                        <div class="menu-option" onclick="showAbout()">
+                            <i class="fas fa-info-circle"></i> 关于编辑器
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-option" onclick="toggleTheme()">
+                            <i class="fas fa-palette"></i> 切换主题
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-actions">
+                <button class="action-btn compile-btn" onclick="compileCode()" title="编译 (F7)">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="action-btn run-btn" onclick="runCode()" title="运行 (F5)">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="action-btn theme-btn" onclick="toggleTheme()" title="切换主题">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 主要内容区域 -->
+        <div class="main-content">
+            <!-- 侧边栏 - 文件浏览器 -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-folder"></i> 文件浏览器</h3>
+                    <div class="sidebar-actions">
+                        <button onclick="refreshFiles()" title="刷新">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button onclick="newFile()" title="新建文件">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="file-tree" id="file-tree">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> 加载中...
+                    </div>
+                </div>
+            </div>
+
+            <!-- 编辑器区域 -->
+            <div class="editor-container">
+                <div class="editor-header">
+                    <div class="tab-bar" id="tab-bar">
+                        <div class="tab welcome-tab active">
+                            <span class="tab-title">
+                                <i class="fas fa-home"></i> 欢迎
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="editor-content">
+                    <div id="welcome-screen" class="welcome-screen">
+                        <div class="welcome-content">
+                            <h1><i class="fas fa-water"></i> AquaScript 编辑器</h1>
+                            <p>欢迎使用 AquaScript 代码编辑器！</p>
+                            
+                            <div class="quick-actions">
+                                <button class="quick-btn" onclick="newFile()">
+                                    <i class="fas fa-file-plus"></i>
+                                    <span>新建文件</span>
+                                </button>
+                                <button class="quick-btn" onclick="openSampleFile()">
+                                    <i class="fas fa-code"></i>
+                                    <span>打开示例</span>
+                                </button>
+                                <button class="quick-btn" onclick="showHelp()">
+                                    <i class="fas fa-book"></i>
+                                    <span>查看文档</span>
+                                </button>
+                            </div>
+                            
+                            <div class="features">
+                                <h3>编辑器特性</h3>
+                                <ul>
+                                    <li><i class="fas fa-check"></i> 语法高亮和智能提示</li>
+                                    <li><i class="fas fa-check"></i> 一键编译运行</li>
+                                    <li><i class="fas fa-check"></i> 集成文件管理器</li>
+                                    <li><i class="fas fa-check"></i> 实时控制台输出</li>
+                                    <li><i class="fas fa-check"></i> 深色/浅色主题</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="monaco-editor" class="monaco-editor" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 控制台 -->
+        <div class="console-container">
+            <div class="console-header">
+                <h3><i class="fas fa-terminal"></i> 控制台</h3>
+                <div class="console-actions">
+                    <button onclick="clearConsole()" title="清空控制台">
+                        <i class="fas fa-broom"></i>
+                    </button>
+                    <button onclick="toggleConsole()" title="折叠/展开">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="console-content" id="console-content">
+                <div class="console-line welcome-line">
+                    <span class="timestamp">[系统]</span>
+                    <span class="message">欢迎使用 AquaScript 编辑器！</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态对话框 -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modal-title">标题</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                内容
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmModal()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs/loader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/file-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/console.js') }}"></script>
+</body>
+</html>

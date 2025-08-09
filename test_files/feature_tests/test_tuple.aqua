@@ -1,0 +1,30 @@
+# 测试元组功能
+
+print("=== AquaScript 元组功能测试 ===")
+
+# 1. 创建空元组
+var empty_tuple = ()
+print("空元组:")
+print(empty_tuple)
+
+# 2. 创建单元素元组（需要尾随逗号）
+var single_tuple = (42,)
+print("单元素元组:")
+print(single_tuple)
+
+# 3. 创建多元素元组
+var numbers = (1, 2, 3, 4, 5)
+print("数字元组:")
+print(numbers)
+
+# 4. 混合数据类型元组
+var mixed = ("Alice", 25, true)
+print("混合元组:")
+print(mixed)
+
+# 5. 嵌套元组
+var nested = ((1, 2), (3, 4))
+print("嵌套元组:")
+print(nested)
+
+print("=== 元组测试完成 ===")

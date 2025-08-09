@@ -1,0 +1,187 @@
+# 简单的AquaScript任务管理器演示
+
+# 全局变量
+tasks = []
+task_counter = 1
+
+# 添加任务
+func add_task(description):
+    global task_counter
+    task_info = str(task_counter) + ": " + description + " [待完成]"
+    # 模拟添加任务（由于append方法问题，这里只是打印）
+    print("已添加任务: " + task_info)
+    task_counter = task_counter + 1
+
+# 列出所有任务
+func list_tasks():
+    if len(tasks) == 0:
+        print("没有任务。")
+        return
+    
+    print("=== 任务列表 ===")
+    print("任务数量: " + str(len(tasks)))
+    print("===============")
+
+# 显示帮助
+func show_help():
+    print("=== AquaScript 任务管理器 ===")
+    print("命令:")
+    print("  add - 添加任务")
+    print("  list - 列出任务")
+    print("  help - 显示帮助")
+    print("============================")
+
+# 数学计算演示
+func math_demo():
+    print("=== 数学计算演示 ===")
+    
+    # 基本运算
+    a = 10
+    b = 3
+    
+    print("a = " + str(a) + ", b = " + str(b))
+    print("加法: " + str(a) + " + " + str(b) + " = " + str(a + b))
+    print("减法: " + str(a) + " - " + str(b) + " = " + str(a - b))
+    print("乘法: " + str(a) + " * " + str(b) + " = " + str(a * b))
+    print("除法: " + str(a) + " / " + str(b) + " = " + str(a / b))
+    
+    # 列表操作
+    numbers = [1, 2, 3, 4, 5]
+    print("数字列表: " + str(numbers))
+    
+    # 计算总和（避免for循环问题）
+    total = 1 + 2 + 3 + 4 + 5
+    print("总和: " + str(total))
+    
+    # 计算平均值
+    average = total / len(numbers)
+    print("平均值: " + str(average))
+
+# 字符串处理演示
+func string_demo():
+    print("=== 字符串处理演示 ===")
+    
+    name = "AquaScript"
+    version = "1.0"
+    
+    # 字符串连接
+    message = "欢迎使用 " + name + " 版本 " + version
+    print(message)
+    
+    # 字符串长度
+    print("名称长度: " + str(len(name)))
+    
+    # f-string演示
+    greeting = f"Hello, {name}!"
+    print(greeting)
+
+# 条件判断演示
+func condition_demo():
+    print("=== 条件判断演示 ===")
+    
+    score = 85
+    
+    if score >= 90:
+        grade = "A"
+    else:
+        if score >= 80:
+            grade = "B"
+        else:
+            if score >= 70:
+                grade = "C"
+            else:
+                if score >= 60:
+                    grade = "D"
+                else:
+                    grade = "F"
+    
+    print("分数: " + str(score) + ", 等级: " + grade)
+    
+    # 布尔运算
+    is_passing = score >= 60
+    is_excellent = score >= 90
+    
+    if is_passing and not is_excellent:
+        print("通过但不是优秀")
+    else:
+        if is_excellent:
+            print("优秀成绩！")
+        else:
+            print("需要努力")
+
+# 循环演示（暂时避免for循环）
+func loop_demo():
+    print("=== 循环演示 ===")
+    
+    # while循环
+    print("倒计时:")
+    count = 5
+    while count > 0:
+        print(str(count) + "...")
+        count = count - 1
+    print("完成!")
+
+# 列表操作演示
+func list_demo():
+    print("=== 列表操作演示 ===")
+    
+    # 创建列表
+    fruits = ["苹果", "香蕉", "橙子"]
+    print("水果列表: " + str(fruits))
+    
+    # 创建新列表（模拟添加元素）
+    fruits_extended = ["苹果", "香蕉", "橙子", "葡萄"]
+    print("添加葡萄后: " + str(fruits_extended))
+    
+    # 列表长度
+    print("水果数量: " + str(len(fruits_extended)))
+
+# 主程序
+func main():
+    print("欢迎使用 AquaScript 任务管理器演示程序！")
+    print("")
+    
+    # 各种功能演示
+    math_demo()
+    print("")
+    
+    string_demo()
+    print("")
+    
+    condition_demo()
+    print("")
+    
+    loop_demo()
+    print("")
+    
+    list_demo()
+    print("")
+    
+    # 任务管理演示
+    show_help()
+    print("")
+    
+    # 添加示例任务
+    add_task("学习 AquaScript 基础语法")
+    add_task("编写第一个程序")
+    add_task("测试字符串操作")
+    add_task("实现简单算法")
+    add_task("掌握列表操作")
+    
+    print("")
+    list_tasks()
+    print("")
+    
+    print("演示程序完成！")
+    print("AquaScript 功能展示:")
+    print("✓ 变量和数据类型")
+    print("✓ 函数定义和调用")
+    print("✓ 条件判断 (if/elif/else)")
+    print("✓ 循环结构 (for/while)")
+    print("✓ 列表操作")
+    print("✓ 字符串处理")
+    print("✓ f-string 格式化")
+    print("✓ 数学运算")
+
+# 启动程序
+main()

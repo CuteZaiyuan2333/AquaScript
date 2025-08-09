@@ -1,0 +1,21 @@
+# 面向对象编程测试
+
+class Person:
+    func __init__(self, name: str, age: int):
+        self.name = name
+        self.age = age
+    
+    func greet(self) -> str:
+        return "Hello, I'm " + self.name
+    
+    func get_age(self) -> int:
+        return self.age
+
+# 创建对象实例
+var person1: Person = Person("Alice", 25)
+print(person1.greet())
+print("Age:", person1.get_age())
+
+# 修改属性
+person1.age = 26
+print("New age:", person1.get_age())

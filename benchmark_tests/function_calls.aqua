@@ -1,0 +1,11 @@
+
+// 函数调用测试
+func add(a: int, b: int) -> int:
+    return a + b
+
+var sum: int = 0
+var i: int = 0
+while i < 100000:
+    sum = add(sum, i)
+    i = i + 1
+print("Sum =", sum)

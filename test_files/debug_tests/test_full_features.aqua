@@ -1,0 +1,73 @@
+# AquaScript 完整功能测试
+# 测试所有已实现的语言特性
+
+var global_message: str = "AquaScript is working!"
+var global_counter: int = 0
+
+# 递归函数 - 阶乘计算
+func factorial(n: int) -> int:
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+# 迭代函数 - 求和
+func sum_range(start: int, end: int) -> int:
+    var total: int = 0
+    var i: int = start
+    while i <= end:
+        total = total + i
+        i = i + 1
+    return total
+
+# 条件判断函数
+func check_number(num: int) -> str:
+    if num > 0:
+        print("Positive number:", num)
+        return "positive"
+    else:
+        if num < 0:
+            print("Negative number:", num)
+            return "negative"
+        else:
+            print("Zero")
+            return "zero"
+
+# 全局变量修改函数
+func increment_counter() -> int:
+    global_counter = global_counter + 1
+    return global_counter
+
+# 主程序
+if __name__ == "__main__":
+    print(global_message)
+    print("Testing factorial: 5! =", factorial(5))
+    print("Testing sum 1-10:", sum_range(1, 10))
+    
+    check_number(42)
+    check_number(-17)
+    check_number(0)
+    
+    print("Counter before:", global_counter)
+    print("Increment result:", increment_counter())
+    print("Counter after:", global_counter)
+    
+    # 测试布尔运算
+    var a: bool = true
+    var b: bool = false
+    print("Boolean AND:", a and b)
+    print("Boolean OR:", a or b)
+    print("Boolean NOT:", not a)
+    
+    # 测试比较运算
+    print("5 == 5:", 5 == 5)
+    print("3 != 7:", 3 != 7)
+    print("10 > 5:", 10 > 5)
+    print("2 < 8:", 2 < 8)
+    
+    # 测试算术运算
+    print("Math: 2 + 3 * 4 =", 2 + 3 * 4)
+    print("Power: 2**3 =", 2 ** 3)
+    print("Modulo: 17 % 5 =", 17 % 5)
+    
+    print("All tests completed successfully!")

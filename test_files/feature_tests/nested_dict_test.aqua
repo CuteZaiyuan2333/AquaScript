@@ -1,0 +1,21 @@
+# 嵌套字典测试
+
+var config = {
+    "database": {
+        "host": "localhost",
+        "port": 5432
+    },
+    "app": {
+        "name": "MyApp",
+        "version": "1.0"
+    }
+}
+
+print("配置信息:")
+print(config)
+
+print("数据库主机:", config["database"]["host"])
+print("应用名称:", config["app"]["name"])
+
+config["database"]["port"] = 3306
+print("修改后的端口:", config["database"]["port"])

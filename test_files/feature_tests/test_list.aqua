@@ -1,0 +1,29 @@
+# 测试列表功能
+
+# 创建空列表
+var empty_list = []
+print("空列表:", empty_list)
+
+# 创建有元素的列表
+var numbers = [1, 2, 3, 4, 5]
+print("数字列表:", numbers)
+
+# 混合类型列表
+var mixed = [1, "hello", true, 3.14]
+print("混合列表:", mixed)
+
+# 访问列表元素
+print("第一个元素:", numbers[0])
+print("第三个元素:", numbers[2])
+
+# 修改列表元素
+numbers[1] = 99
+print("修改后的列表:", numbers)
+
+# 嵌套列表
+var nested = [[1, 2], [3, 4], [5, 6]]
+print("嵌套列表:", nested)
+print("嵌套元素:", nested[1][0])
+
+# 列表长度
+print("列表长度:", len(numbers))

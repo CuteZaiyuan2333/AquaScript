@@ -1,0 +1,141 @@
+# AquaScript 计算器程序
+
+print("=== AquaScript 科学计算器 ===")
+
+# 基础运算函数
+func add(a, b):
+    return a + b
+
+func subtract(a, b):
+    return a - b
+
+func multiply(a, b):
+    return a * b
+
+func divide(a, b):
+    if b == 0:
+        print("错误: 除数不能为零!")
+        return 0
+    else:
+        return a / b
+
+func power(base, exponent):
+    result = 1
+    i = 0
+    while i < exponent:
+        result = result * base
+        i = i + 1
+    return result
+
+func square_root_approx(n):
+    if n < 0:
+        print("错误: 负数没有实数平方根!")
+        return 0
+    
+    if n == 0:
+        return 0
+    
+    # 使用牛顿法近似计算平方根
+    x = n / 2
+    i = 0
+    while i < 10:  # 迭代10次
+        x = (x + n / x) / 2
+        i = i + 1
+    return x
+
+func factorial(n):
+    if n < 0:
+        print("错误: 负数没有阶乘!")
+        return 0
+    elif n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+func percentage(value, percent):
+    return value * percent / 100
+
+# 三角函数近似（使用泰勒级数）
+func sin_approx(x):
+    # 简化的正弦函数近似
+    # sin(x) ≈ x - x³/6 + x⁵/120 (前几项)
+    x3 = x * x * x
+    x5 = x3 * x * x
+    return x - x3/6 + x5/120
+
+func cos_approx(x):
+    # 简化的余弦函数近似
+    # cos(x) ≈ 1 - x²/2 + x⁴/24 (前几项)
+    x2 = x * x
+    x4 = x2 * x2
+    return 1 - x2/2 + x4/24
+
+# 演示计算器功能
+print("\n--- 基础运算演示 ---")
+a = 15
+b = 4
+
+print(f"a = {a}, b = {b}")
+print(f"加法: {a} + {b} = {add(a, b)}")
+print(f"减法: {a} - {b} = {subtract(a, b)}")
+print(f"乘法: {a} × {b} = {multiply(a, b)}")
+print(f"除法: {a} ÷ {b} = {divide(a, b)}")
+print(f"幂运算: {a}^{b} = {power(a, b)}")
+
+print("\n--- 高级运算演示 ---")
+print(f"√16 ≈ {square_root_approx(16)}")
+print(f"√25 ≈ {square_root_approx(25)}")
+print(f"5! = {factorial(5)}")
+print(f"7! = {factorial(7)}")
+
+print("\n--- 百分比计算 ---")
+price = 100
+discount = 15
+print(f"原价: {price}")
+print(f"折扣: {discount}%")
+print(f"折扣金额: {percentage(price, discount)}")
+print(f"最终价格: {price - percentage(price, discount)}")
+
+print("\n--- 三角函数近似 ---")
+angle = 0.5  # 弧度
+print(f"角度: {angle} 弧度")
+print(f"sin({angle}) ≈ {sin_approx(angle)}")
+print(f"cos({angle}) ≈ {cos_approx(angle)}")
+
+print("\n--- 复合计算示例 ---")
+# 计算复利
+principal = 1000
+rate = 0.05  # 5%
+years = 10
+
+func compound_interest(p, r, t):
+    # A = P(1 + r)^t
+    return p * power(1 + r, t)
+
+final_amount = compound_interest(principal, rate, years)
+print(f"本金: {principal}")
+print(f"年利率: {rate * 100}%")
+print(f"年数: {years}")
+print(f"复利最终金额: {final_amount}")
+
+# 计算二次方程的判别式
+func discriminant(a, b, c):
+    return b * b - 4 * a * c
+
+print("\n--- 二次方程 ax² + bx + c = 0 ---")
+coeff_a = 1
+coeff_b = -5
+coeff_c = 6
+
+disc = discriminant(coeff_a, coeff_b, coeff_c)
+print(f"方程: {coeff_a}x² + ({coeff_b})x + {coeff_c} = 0")
+print(f"判别式: {disc}")
+
+if disc > 0:
+    print("方程有两个不同的实根")
+elif disc == 0:
+    print("方程有一个重根")
+else:
+    print("方程有两个复数根")
+
+print("\n=== 计算器演示完成 ===")

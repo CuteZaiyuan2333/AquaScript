@@ -1,0 +1,10 @@
+# 复杂的f-string测试
+name = "Alice"
+age = 25
+x = 10
+y = 20
+
+print(f"Hello, {name}!")
+print(f"You are {age} years old.")
+print(f"The sum of {x} and {y} is {x + y}")
+print(f"Result: {x * y + 5}")

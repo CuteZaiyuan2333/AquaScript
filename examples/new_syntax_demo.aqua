@@ -1,0 +1,103 @@
+# AquaScript 新语法演示
+# 展示改进后的语法特性
+
+# 导入Python模块
+import math
+from random import randint, choice
+
+# 变量声明（带类型）
+var name: str = "AquaScript"
+var version: float = 2.0
+var is_ready: bool = true
+var count: int = 0
+
+# 函数定义（使用func关键字）
+func greet(person: str) -> str:
+    return "Hello, " + person + "!"
+
+func calculate_area(radius: float) -> float:
+    return math.pi * radius * radius
+
+# 类定义
+class Calculator:
+    func __init__(self):
+        self.history = []
+    
+    func add(self, a: int, b: int) -> int:
+        var result: int = a + b
+        self.history.append("add: " + str(a) + " + " + str(b) + " = " + str(result))
+        return result
+    
+    func multiply(self, a: int, b: int) -> int:
+        var result: int = a * b
+        self.history.append("multiply: " + str(a) + " * " + str(b) + " = " + str(result))
+        return result
+    
+    func get_history(self) -> list:
+        return self.history
+
+# repeat循环（do-while风格）
+func demo_repeat():
+    var x: int = 0
+    repeat:
+        print("x = " + str(x))
+        x = x + 1
+    while x < 3
+
+# switch语句
+func demo_switch(value: int):
+    switch value:
+        case 1:
+            print("One")
+        case 2:
+            print("Two")
+        case 3:
+            print("Three")
+        default:
+            print("Other: " + str(value))
+
+# for循环（增强版）
+func demo_for():
+    var numbers: list = [1, 2, 3, 4, 5]
+    
+    for num in numbers:
+        if num % 2 == 0:
+            print(str(num) + " is even")
+        else:
+            print(str(num) + " is odd")
+
+# 主程序
+func main():
+    print("=== AquaScript 新语法演示 ===")
+    
+    # 测试变量和函数
+    print(greet(name))
+    print("Version: " + str(version))
+    
+    # 测试Python模块集成
+    var area: float = calculate_area(5.0)
+    print("Circle area: " + str(area))
+    
+    var random_num: int = randint(1, 10)
+    print("Random number: " + str(random_num))
+    
+    # 测试类
+    var calc: Calculator = Calculator()
+    var sum_result: int = calc.add(10, 20)
+    var mul_result: int = calc.multiply(5, 6)
+    
+    print("Sum: " + str(sum_result))
+    print("Product: " + str(mul_result))
+    print("History: " + str(calc.get_history()))
+    
+    # 测试控制流
+    demo_repeat()
+    demo_switch(2)
+    demo_switch(5)
+    demo_for()
+    
+    print("=== 演示完成 ===")
+
+# 程序入口
+if __name__ == "__main__":
+    main()

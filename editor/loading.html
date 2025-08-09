@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaScript Editor - 启动中</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .loading-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00d4ff, #090979);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+
+        .title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            font-size: 1em;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #090979);
+            border-radius: 2px;
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .status-text {
+            font-size: 0.9em;
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .features h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 5px 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            color: #00d4ff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="logo">🌊</div>
+        <h1 class="title">AquaScript Editor</h1>
+        <p class="subtitle">现代化的 AquaScript 集成开发环境</p>
+        
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在启动编辑器...</div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        
+        <div class="status-text">初始化后端服务中，请稍候...</div>
+        
+        <div class="features">
+            <h3>功能特性</h3>
+            <ul class="feature-list">
+                <li>智能语法高亮</li>
+                <li>代码自动补全</li>
+                <li>一键编译运行</li>
+                <li>文件管理系统</li>
+                <li>实时错误提示</li>
+                <li>主题切换支持</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 动态更新状态文本
+        const statusTexts = [
+            "初始化后端服务中，请稍候...",
+            "启动 Python Flask 服务器...",
+            "加载编辑器组件...",
+            "准备工作区环境...",
+            "即将完成..."
+        ];
+        
+        let currentIndex = 0;
+        const statusElement = document.querySelector('.status-text');
+        
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % statusTexts.length;
+            statusElement.textContent = statusTexts[currentIndex];
+        }, 2000);
+    </script>
+</body>
+</html>

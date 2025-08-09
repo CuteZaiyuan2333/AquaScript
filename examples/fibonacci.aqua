@@ -1,0 +1,56 @@
+# AquaScript示例程序：斐波那契数列
+
+def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+def fibonacci_iterative(n):
+    if n <= 1:
+        return n
+    
+    a = 0
+    b = 1
+    i = 2
+    
+    while i <= n:
+        temp = a + b
+        a = b
+        b = temp
+        i = i + 1
+    
+    return b
+
+# 主程序
+print("Fibonacci Sequence Calculator")
+print("============================")
+
+# 计算前10个斐波那契数
+print("First 10 Fibonacci numbers:")
+i = 0
+while i < 10:
+    fib = fibonacci_iterative(i)
+    print("F(" + str(i) + ") = " + str(fib))
+    i = i + 1
+
+print("")
+
+# 计算特定位置的斐波那契数
+n = 15
+result = fibonacci_iterative(n)
+print("F(" + str(n) + ") = " + str(result))
+
+# 比较递归和迭代版本（小数值）
+n_small = 8
+print("")
+print("Comparing recursive vs iterative for F(" + str(n_small) + "):")
+recursive_result = fibonacci(n_small)
+iterative_result = fibonacci_iterative(n_small)
+print("Recursive: " + str(recursive_result))
+print("Iterative: " + str(iterative_result))
+
+if recursive_result == iterative_result:
+    print("Results match!")
+else:
+    print("Results don't match!")

@@ -1,0 +1,6 @@
+# 布尔值测试
+var t = true
+var f = false
+print("true值:", t)
+print("false值:", f)
+print("布尔列表:", [true, false])

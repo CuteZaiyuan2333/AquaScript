@@ -1,0 +1,38 @@
+# AquaScript 异常处理测试
+
+# 基本的try-catch测试
+try {
+    print("在try块中")
+    throw "这是一个测试异常"
+    print("这行不应该被执行")
+} catch e {
+    print("捕获到异常:", e)
+}
+
+print("继续执行...")
+
+# 带finally的测试
+try {
+    print("在第二个try块中")
+    throw "另一个异常"
+} catch e {
+    print("捕获到第二个异常:", e)
+} finally {
+    print("finally块总是执行")
+}
+
+# 嵌套异常处理测试
+try {
+    print("外层try块")
+    try {
+        print("内层try块")
+        throw "内层异常"
+    } catch e {
+        print("内层catch:", e)
+        throw "重新抛出的异常"
+    }
+} catch e {
+    print("外层catch:", e)
+}
+
+print("程序结束")

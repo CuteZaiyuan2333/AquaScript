@@ -1,0 +1,45 @@
+# 字典功能综合测试
+
+print("=== AquaScript 字典功能测试 ===")
+
+# 1. 基本字典操作
+print("\n1. 基本字典操作:")
+var empty = {}
+var person = {"name": "张三", "age": 25, "city": "北京"}
+print("空字典:", empty)
+print("人员信息:", person)
+print("姓名:", person["name"])
+print("年龄:", person["age"])
+
+# 2. 字典修改
+print("\n2. 字典修改:")
+person["age"] = 26
+person["job"] = "工程师"
+print("修改后:", person)
+
+# 3. 嵌套字典
+print("\n3. 嵌套字典:")
+var company = {"name": "科技公司", "employees": {"count": 100, "departments": {"tech": 50, "sales": 30, "hr": 20}}}
+print("公司信息:", company)
+print("员工总数:", company["employees"]["count"])
+print("技术部人数:", company["employees"]["departments"]["tech"])
+
+# 4. 字典与列表混合
+print("\n4. 字典与列表混合:")
+var data = {"numbers": [1, 2, 3], "info": {"type": "test", "valid": true}}
+print("混合数据:", data)
+print("数字列表:", data["numbers"])
+print("信息类型:", data["info"]["type"])
+
+# 5. 字典作为函数参数
+print("\n5. 字典作为函数参数:")
+func process_user(user_dict) {
+    print("处理用户:", user_dict["name"])
+    print("用户年龄:", user_dict["age"])
+    return user_dict["name"] + " 已处理"
+}
+
+var result = process_user(person)
+print("处理结果:", result)
+
+print("\n=== 字典功能测试完成 ===")

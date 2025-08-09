@@ -1,0 +1,12 @@
+# 测试字符串连接
+
+func greet(person: str) -> str:
+    return "Hello, " + person + "!"
+
+func main():
+    var name: str = "World"
+    var greeting: str = greet(name)
+    print(greeting)
+
+if __name__ == "__main__":
+    main()

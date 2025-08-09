@@ -1,0 +1,18 @@
+# 简单的条件测试
+
+print("=== 条件测试 ===")
+
+# 测试偶数条件
+var numbers = [1, 2, 3, 4, 5]
+print("原始列表:", numbers)
+
+# 测试每个数字的条件
+for x in numbers:
+    var is_even = x % 2 == 0
+    print("数字", x, "是偶数:", is_even)
+
+# 测试列表推导式中的条件
+var even_numbers = [x for x in numbers if x % 2 == 0]
+print("偶数列表:", even_numbers)
+
+print("=== 测试完成 ===")

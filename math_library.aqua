@@ -1,0 +1,118 @@
+# AquaScript 数学工具库
+
+print("=== AquaScript 数学工具库 ===")
+
+# 基础数学函数
+func abs_value(x):
+    if x < 0:
+        return -x
+    else:
+        return x
+
+func max_value(a, b):
+    if a > b:
+        return a
+    else:
+        return b
+
+func min_value(a, b):
+    if a < b:
+        return a
+    else:
+        return b
+
+func power(base, exponent):
+    if exponent == 0:
+        return 1
+    elif exponent == 1:
+        return base
+    else:
+        result = 1
+        i = 0
+        while i < exponent:
+            result = result * base
+            i = i + 1
+        return result
+
+# 数学常量
+PI = 3.141592653589793
+E = 2.718281828459045
+
+# 几何函数
+func circle_area(radius):
+    return PI * radius * radius
+
+func circle_circumference(radius):
+    return 2 * PI * radius
+
+func rectangle_area(length, width):
+    return length * width
+
+func triangle_area(base, height):
+    return 0.5 * base * height
+
+# 统计函数
+func average_two(a, b):
+    return (a + b) / 2
+
+func average_three(a, b, c):
+    return (a + b + c) / 3
+
+# 数论函数
+func factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+func fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+func is_even(n):
+    return n % 2 == 0
+
+func is_odd(n):
+    return n % 2 == 1
+
+func gcd(a, b):
+    while b != 0:
+        temp = b
+        b = a % b
+        a = temp
+    return a
+
+# 测试所有函数
+print("\n--- 基础数学函数测试 ---")
+print("abs_value(-10) = " + str(abs_value(-10)))
+print("max_value(15, 25) = " + str(max_value(15, 25)))
+print("min_value(15, 25) = " + str(min_value(15, 25)))
+print("power(2, 8) = " + str(power(2, 8)))
+
+print("\n--- 数学常量 ---")
+print("PI = " + str(PI))
+print("E = " + str(E))
+
+print("\n--- 几何计算 ---")
+radius = 5
+print("半径为 " + str(radius) + " 的圆:")
+print("面积 = " + str(circle_area(radius)))
+print("周长 = " + str(circle_circumference(radius)))
+
+print("长方形 (6x4) 面积 = " + str(rectangle_area(6, 4)))
+print("三角形 (底8高5) 面积 = " + str(triangle_area(8, 5)))
+
+print("\n--- 统计计算 ---")
+print("average_two(10, 20) = " + str(average_two(10, 20)))
+print("average_three(10, 20, 30) = " + str(average_three(10, 20, 30)))
+
+print("\n--- 数论函数 ---")
+print("factorial(6) = " + str(factorial(6)))
+print("fibonacci(12) = " + str(fibonacci(12)))
+print("is_even(8) = " + str(is_even(8)))
+print("is_odd(7) = " + str(is_odd(7)))
+print("gcd(48, 18) = " + str(gcd(48, 18)))
+
+print("\n=== 数学工具库测试完成 ===")

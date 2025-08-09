@@ -1,0 +1,41 @@
+# 高级字典测试
+
+# 嵌套字典
+var config = {
+    "database": {
+        "host": "localhost",
+        "port": 5432,
+        "name": "mydb"
+    },
+    "cache": {
+        "enabled": true,
+        "ttl": 3600
+    }
+}
+
+print("配置信息:")
+print(config)
+
+# 访问嵌套字典
+print("数据库主机:", config["database"]["host"])
+print("缓存TTL:", config["cache"]["ttl"])
+
+# 修改嵌套字典
+config["database"]["port"] = 3306
+config["cache"]["enabled"] = false
+print("修改后的数据库端口:", config["database"]["port"])
+print("修改后的缓存状态:", config["cache"]["enabled"])
+
+# 混合数据类型
+var mixed = {
+    "string": "hello",
+    "number": 42,
+    "boolean": true,
+    "list": [1, 2, 3],
+    "dict": {"nested": "value"}
+}
+
+print("混合类型字典:")
+print(mixed)
+print("列表元素:", mixed["list"])
+print("嵌套字典:", mixed["dict"]["nested"])

@@ -1,0 +1,16 @@
+# AquaScript 示例程序
+func greet(name):
+    return f"Hello, {name}!"
+
+func main():
+    print("=== AquaScript 编辑器演示 ===")
+    message = greet("World")
+    print(message)
+    
+    # 简单计算
+    a = 10
+    b = 20
+    result = a + b
+    print(f"计算结果: {a} + {b} = {result}")
+
+main()

@@ -1,0 +1,51 @@
+{
+  "name": "aquascript-editor",
+  "version": "1.0.0",
+  "description": "AquaScript 语言集成开发环境",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=never"
+  },
+  "keywords": [
+    "aquascript",
+    "editor",
+    "ide",
+    "programming"
+  ],
+  "author": "AquaScript Team",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.aquascript.editor",
+    "productName": "AquaScript Editor",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "static/**/*",
+      "templates/**/*",
+      "app.py",
+      "requirements.txt",
+      "workspace/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "static/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "static/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "static/icon.png"
+    }
+  }
+}

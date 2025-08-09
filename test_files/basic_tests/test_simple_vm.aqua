@@ -1,0 +1,9 @@
+# 简单的虚拟机测试
+
+func main():
+    print("Hello World")
+    var x: int = 42
+    print("x = " + str(x))
+
+if __name__ == "__main__":
+    main()

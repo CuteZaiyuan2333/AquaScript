@@ -1,0 +1,18 @@
+# 简单的elif测试
+func test_number(x):
+    print("测试数字: " + str(x))
+    if x > 10:
+        print("大于10")
+    elif x > 5:
+        print("大于5但小于等于10")
+    elif x > 0:
+        print("大于0但小于等于5")
+    else:
+        print("小于等于0")
+    print("---")
+
+# 测试不同的数字
+test_number(15)
+test_number(8)
+test_number(3)
+test_number(-2)

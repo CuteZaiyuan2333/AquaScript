@@ -1,0 +1,12 @@
+var global_var: str = "Global Value"
+
+func test_function(param: str) -> str:
+    var local_var: str = "Local Value"
+    print(global_var)
+    print(local_var)
+    print(param)
+    return local_var
+
+if __name__ == "__main__":
+    result = test_function("Parameter")
+    print(result)

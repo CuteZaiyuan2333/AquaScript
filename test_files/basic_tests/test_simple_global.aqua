@@ -1,0 +1,9 @@
+# 最简单的全局变量测试
+
+var name: str = "Test"
+
+func main():
+    print(name)
+
+if __name__ == "__main__":
+    main()

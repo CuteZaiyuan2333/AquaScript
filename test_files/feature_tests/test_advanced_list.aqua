@@ -1,0 +1,27 @@
+# 高级列表功能测试
+
+# 混合类型列表
+var mixed = [1, "hello", true]
+print("混合列表:", mixed)
+print("字符串元素:", mixed[1])
+print("布尔元素:", mixed[2])
+
+# 嵌套列表
+var nested = [[1, 2], [3, 4]]
+print("嵌套列表:", nested)
+print("第一个子列表:", nested[0])
+print("嵌套元素:", nested[0][1])
+
+# 修改嵌套列表
+nested[1][0] = 99
+print("修改后的嵌套列表:", nested)
+
+# 列表长度
+print("混合列表长度:", len(mixed))
+print("嵌套列表长度:", len(nested))
+
+# 字符串列表
+var names = ["Alice", "Bob", "Charlie"]
+print("姓名列表:", names)
+names[1] = "Bobby"
+print("修改后的姓名:", names)

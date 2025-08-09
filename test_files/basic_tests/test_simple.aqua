@@ -1,0 +1,5 @@
+# 简单测试文件
+var x: int = 5
+
+func test() -> int:
+    return x

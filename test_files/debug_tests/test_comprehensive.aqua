@@ -1,0 +1,41 @@
+# AquaScript 综合功能测试
+
+var global_message: str = "Hello from AquaScript!"
+var counter: int = 0
+
+func greet(name: str) -> str:
+    var greeting: str = "Hello, " + name + "!"
+    print(greeting)
+    return greeting
+
+func fibonacci(n: int) -> int:
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+func test_loops() -> int:
+    var sum: int = 0
+    var i: int = 1
+    while i <= 5:
+        sum = sum + i
+        i = i + 1
+    return sum
+
+if __name__ == "__main__":
+    print(global_message)
+    
+    # 测试函数调用
+    result = greet("World")
+    
+    # 测试递归
+    fib_result = fibonacci(6)
+    print("Fibonacci(6) =", fib_result)
+    
+    # 测试循环
+    loop_sum = test_loops()
+    print("Sum 1-5 =", loop_sum)
+    
+    # 测试全局变量修改
+    counter = counter + 1
+    print("Counter:", counter)

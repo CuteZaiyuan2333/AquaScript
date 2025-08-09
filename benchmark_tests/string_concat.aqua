@@ -1,0 +1,8 @@
+
+// 字符串拼接测试
+var result: str = ""
+var i: int = 0
+while i < 10000:
+    result = result + "a"
+    i = i + 1
+print("String length:", len(result))
