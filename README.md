@@ -95,19 +95,34 @@ greet("World")
 - 数据类型支持（数字、字符串、布尔值、列表、**字典**）
 - 运算符系统（算术、比较、逻辑）
 - 函数定义和调用
-- 条件语句（if/elif/else）
-- 循环语句（while/for）- **已修复 for 循环实现**
-- 字符串格式化（f-string）
+- 条件语句（if/else）- **注意：暂不支持elif**
+- 循环语句（while）- **注意：for循环支持有限**
+- 字符串操作和连接
 - **字典完整支持**（嵌套字典、混合数据类型、键值对操作）
 - 基础虚拟机和字节码执行
 - 编译器工具链
 - 错误处理和调试支持
 - **性能优化版本**（optimized_aquavm.py）
 
+### 示例程序状态 📊
+- **总示例文件**: 18个
+- **成功运行**: 7个文件 (38.9% 成功率)
+- **包含功能**: 数据结构、算法、字符串处理、游戏逻辑
+
+#### 可运行的示例 ✅
+- `fibonacci.aqua` - 斐波那契数列计算
+- `hello.aqua` - 基础Hello World示例
+- `test_basic.aqua` - 列表和字典基础操作
+- `data_structures.aqua` - 数据结构和算法演示
+- `string_basic.aqua` - 字符串基础操作
+- `string_processing_simple.aqua` - 简化字符串处理
+- `simple_game_basic.aqua` - 猜数字游戏
+
 ### 进行中功能 🔄
 - 异常处理机制（try/catch/finally）
 - 模块系统（import/from）
 - 元组数据类型
+- 高级语法特性（装饰器、类定义、异步编程）
 - Cython 和 Rust 性能优化版本
 
 ## 📚 文档
@@ -128,3 +143,4 @@ greet("World")
 
 ### 项目管理
 - **[清理总结](CLEANUP_SUMMARY.md)** - 项目整理和代码清理工作总结
+- **[进展报告](PROGRESS_REPORT.md)** - 示例文件修复进展和成功率分析

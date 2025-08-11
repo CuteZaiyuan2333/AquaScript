@@ -1,0 +1,143 @@
+# AquaScript示例程序：字符串处理（简化版）
+
+# 字符串基础操作
+func string_basics():
+    print("=== 字符串基础操作 ===")
+    
+    var text = "Hello, AquaScript World!"
+    var name = "张三"
+    var age = 25
+    
+    print("原始文本: " + text)
+    print("文本长度: " + str(len(text)))
+    print("第一个字符: " + text[0])
+    print("最后一个字符: " + text[len(text) - 1])
+    
+    var greeting = "你好, " + name + "! 你今年 " + str(age) + " 岁了。"
+    print("格式化问候: " + greeting)
+    
+    return True
+
+# 字符串搜索
+func count_occurrences(text, word):
+    var count = 0
+    var i = 0
+    var word_len = len(word)
+    var text_len = len(text)
+    
+    while i <= text_len - word_len:
+        var match = True
+        var j = 0
+        
+        while j < word_len:
+            if text[i + j] != word[j]:
+                match = False
+                break
+            j = j + 1
+        
+        if match:
+            count = count + 1
+            i = i + word_len
+        else:
+            i = i + 1
+    
+    return count
+
+# 字符串替换
+func simple_replace(text, old_word, new_word):
+    var result = ""
+    var i = 0
+    var text_len = len(text)
+    var old_len = len(old_word)
+    
+    while i < text_len:
+        var match = True
+        var j = 0
+        
+        if i + old_len <= text_len:
+            while j < old_len:
+                if text[i + j] != old_word[j]:
+                    match = False
+                    break
+                j = j + 1
+        else:
+            match = False
+        
+        if match:
+            result = result + new_word
+            i = i + old_len
+        else:
+            result = result + text[i]
+            i = i + 1
+    
+    return result
+
+# 字符串反转
+func reverse_string(text):
+    var result = ""
+    var i = len(text) - 1
+    
+    while i >= 0:
+        result = result + text[i]
+        i = i - 1
+    
+    return result
+
+# 计算元音字母
+func count_vowels(text):
+    var vowels = "aeiouAEIOU"
+    var count = 0
+    var i = 0
+    
+    while i < len(text):
+        var char = text[i]
+        var j = 0
+        var is_vowel = False
+        
+        while j < len(vowels):
+            if char == vowels[j]:
+                is_vowel = True
+                break
+            j = j + 1
+        
+        if is_vowel:
+            count = count + 1
+        
+        i = i + 1
+    
+    return count
+
+# 主程序
+func main():
+    print("AquaScript 字符串处理示例（简化版）")
+    print("==========================================")
+    
+    string_basics()
+    
+    print("")
+    print("=== 字符串搜索和替换 ===")
+    var sentence = "AquaScript is great. AquaScript is powerful."
+    print("原始句子: " + sentence)
+    
+    var search_word = "AquaScript"
+    var count = count_occurrences(sentence, search_word)
+    print("'" + search_word + "' 出现次数: " + str(count))
+    
+    var replaced = simple_replace(sentence, "AquaScript", "Python")
+    print("替换后: " + replaced)
+    
+    print("")
+    print("=== 字符串分析 ===")
+    var test_text = "Hello World"
+    print("测试文本: " + test_text)
+    print("字符数: " + str(len(test_text)))
+    print("元音字母数: " + str(count_vowels(test_text)))
+    
+    print("")
+    print("=== 字符串反转 ===")
+    var original = "AquaScript"
+    var reversed = reverse_string(original)
+    print("原始: " + original)
+    print("反转: " + reversed)
+
+main()

@@ -1,0 +1,270 @@
+# AquaScript示例程序：字符串处理和文本操作
+
+# ============= 字符串基础操作 =============
+func string_basics():
+    print("=== 字符串基础操作 ===")
+    
+    var text = "Hello, AquaScript World!"
+    var name = "张三"
+    var age = 25
+    
+    # 字符串长度和索引
+    print("原始文本: " + text)
+    print("文本长度: " + str(len(text)))
+    print("第一个字符: " + text[0])
+    print("最后一个字符: " + text[len(text) - 1])
+    
+    # 字符串格式化
+    var greeting = "你好, " + name + "! 你今年 " + str(age) + " 岁了。"
+    print("格式化问候: " + greeting)
+    
+    return True
+
+# ============= 字符串搜索和替换 =============
+func string_search_replace():
+    print("\n=== 字符串搜索和替换 ===")
+    
+    var sentence = "AquaScript is a powerful programming language. AquaScript is easy to learn."
+    print("原始句子: " + sentence)
+    
+    # 简单的字符串搜索（模拟）
+    var search_word = "AquaScript"
+    var count = count_occurrences(sentence, search_word)
+    print("'" + search_word + "' 出现次数: " + str(count))
+    
+    # 字符串替换（模拟）
+    var replaced = simple_replace(sentence, "AquaScript", "Python")
+    print("替换后: " + replaced)
+    
+    return True
+
+func count_occurrences(text, word):
+    var count = 0
+    var i = 0
+    var word_len = len(word)
+    var text_len = len(text)
+    
+    while i <= text_len - word_len:
+        var match = True
+        var j = 0
+        
+        while j < word_len:
+            if text[i + j] != word[j]:
+                match = False
+                break
+            j = j + 1
+        
+        if match:
+            count = count + 1
+            i = i + word_len
+        else:
+            i = i + 1
+    
+    return count
+
+func simple_replace(text, old_word, new_word):
+    # 简化的字符串替换实现
+    var result = ""
+    var i = 0
+    var text_len = len(text)
+    var old_len = len(old_word)
+    
+    while i < text_len:
+        var match = True
+        var j = 0
+        
+        # 检查是否匹配
+        if i + old_len <= text_len:
+            while j < old_len:
+                if text[i + j] != old_word[j]:
+                    match = False
+                    break
+                j = j + 1
+        else:
+            match = False
+        
+        if match:
+            result = result + new_word
+            i = i + old_len
+        else:
+            result = result + text[i]
+            i = i + 1
+    
+    return result
+
+# ============= 文本分析工具 =============
+func analyze_text(text):
+    print("\n=== 文本分析 ===")
+    print("分析文本: " + text)
+    
+    var char_count = len(text)
+    var word_count = count_words(text)
+    var vowel_count = count_vowels(text)
+    
+    print("字符数: " + str(char_count))
+    print("单词数: " + str(word_count))
+    print("元音字母数: " + str(vowel_count))
+    
+    return {
+        "characters": char_count,
+        "words": word_count,
+        "vowels": vowel_count
+    }
+
+func count_words(text):
+    var word_count = 0
+    var in_word = False
+    var i = 0
+    
+    while i < len(text):
+        var char = text[i]
+        
+        if char == " " or char == "\t" or char == "\n":
+            in_word = False
+        else:
+            if not in_word:
+                word_count = word_count + 1
+                in_word = True
+        
+        i = i + 1
+    
+    return word_count
+
+func count_vowels(text):
+    var vowels = "aeiouAEIOU"
+    var count = 0
+    var i = 0
+    
+    while i < len(text):
+        var char = text[i]
+        var j = 0
+        var is_vowel = False
+        
+        while j < len(vowels):
+            if char == vowels[j]:
+                is_vowel = True
+                break
+            j = j + 1
+        
+        if is_vowel:
+            count = count + 1
+        
+        i = i + 1
+    
+    return count
+
+# ============= 密码学基础 =============
+func caesar_cipher(text, shift):
+    var result = ""
+    var i = 0
+    
+    while i < len(text):
+        var char = text[i]
+        
+        # 简化版本：只处理英文字母
+        if char >= "A" and char <= "Z":
+            var shifted = ((ord(char) - ord("A") + shift) % 26) + ord("A")
+            result = result + chr(shifted)
+        elif char >= "a" and char <= "z":
+            var shifted = ((ord(char) - ord("a") + shift) % 26) + ord("a")
+            result = result + chr(shifted)
+        else:
+            result = result + char
+        
+        i = i + 1
+    
+    return result
+
+func reverse_string(text):
+    var result = ""
+    var i = len(text) - 1
+    
+    while i >= 0:
+        result = result + text[i]
+        i = i - 1
+    
+    return result
+
+# ============= 数据验证 =============
+func validate_email(email):
+    # 简单的邮箱验证
+    var has_at = False
+    var has_dot = False
+    var at_pos = -1
+    var i = 0
+    
+    while i < len(email):
+        if email[i] == "@":
+            if has_at:
+                return False  # 多个@符号
+            has_at = True
+            at_pos = i
+        elif email[i] == ".":
+            if has_at and i > at_pos + 1:
+                has_dot = True
+        i = i + 1
+    
+    return has_at and has_dot and at_pos > 0 and at_pos < len(email) - 2
+
+func validate_phone(phone):
+    # 简单的电话号码验证（只检查数字和长度）
+    var digit_count = 0
+    var i = 0
+    
+    while i < len(phone):
+        var char = phone[i]
+        if char >= "0" and char <= "9":
+            digit_count = digit_count + 1
+        elif char != "-" and char != " " and char != "(" and char != ")":
+            return False
+        i = i + 1
+    
+    return digit_count >= 10 and digit_count <= 15
+
+# ============= 主程序 =============
+func main():
+    print("AquaScript 字符串处理和文本操作示例")
+    print("=" * 45)
+    
+    # 基础字符串操作
+    string_basics()
+    string_search_replace()
+    
+    # 文本分析
+    var sample_text = "Hello world! This is a sample text for analysis."
+    var analysis = analyze_text(sample_text)
+    
+    # 密码学示例
+    print("\n=== 密码学示例 ===")
+    var secret_message = "Hello AquaScript"
+    var encrypted = caesar_cipher(secret_message, 3)
+    var decrypted = caesar_cipher(encrypted, -3)
+    
+    print("原始消息: " + secret_message)
+    print("加密消息: " + encrypted)
+    print("解密消息: " + decrypted)
+    
+    var reversed_text = reverse_string("AquaScript")
+    print("反转字符串: AquaScript -> " + reversed_text)
+    
+    # 数据验证示例
+    print("\n=== 数据验证示例 ===")
+    var test_emails = ["user@example.com", "invalid.email", "test@domain.co.uk"]
+    var test_phones = ["123-456-7890", "1234567890", "invalid-phone", "(555) 123-4567"]
+    
+    var i = 0
+    while i < len(test_emails):
+        var email = test_emails[i]
+        var valid = "有效" if validate_email(email) else "无效"
+        print("邮箱 " + email + " : " + valid)
+        i = i + 1
+    
+    i = 0
+    while i < len(test_phones):
+        var phone = test_phones[i]
+        var valid = "有效" if validate_phone(phone) else "无效"
+        print("电话 " + phone + " : " + valid)
+        i = i + 1
+
+# 运行主程序
+main()

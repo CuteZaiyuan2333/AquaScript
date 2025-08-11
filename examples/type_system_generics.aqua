@@ -1,0 +1,552 @@
+# 导入必要的模块
+import typing.(TypeVar, Generic, Protocol, Union, Optional, List, Dict, Tuple, Callable, Any)
+import abc.(ABC, abstractmethod)
+import inspect
+
+# 1. 基本类型注解
+func add_numbers(a: int, b: int) -> int {
+    """基本类型注解示例"""
+    return a + b
+}
+
+func process_text(text: str, uppercase: bool = False) -> str {
+    """可选参数类型注解"""
+    if uppercase {
+        return text.upper()
+    }
+    return text.lower()
+}
+
+func get_user_info(user_id: int) -> Optional[Dict[str, Any]] {
+    """返回可选类型"""
+    if user_id > 0 {
+        return {
+            "id": user_id,
+            "name": f"User{user_id}",
+            "active": True
+        }
+    }
+    return None
+}
+
+# 2. 泛型类型变量
+T = TypeVar('T')
+K = TypeVar('K')
+V = TypeVar('V')
+Number = TypeVar('Number', int, float)
+
+# 3. 泛型函数
+func identity(value: T) -> T {
+    """泛型恒等函数"""
+    return value
+}
+
+func first_element(items: List[T]) -> Optional[T] {
+    """获取列表第一个元素"""
+    if items {
+        return items[0]
+    }
+    return None
+}
+
+func swap_tuple(pair: Tuple[T, K]) -> Tuple[K, T] {
+    """交换元组元素"""
+    return (pair[1], pair[0])
+}
+
+func map_values(mapping: Dict[K, V], func: Callable[[V], T]) -> Dict[K, T] {
+    """映射字典值"""
+    return {key: func(value) for key, value in mapping.items()}
+}
+
+# 4. 泛型类
+class Container(Generic[T]) {
+    """泛型容器类"""
+    
+    func __init__(self, value: T) {
+        self._value: T = value
+    }
+    
+    @property
+    func value(self) -> T {
+        return self._value
+    }
+    
+    @value.setter
+    func value(self, new_value: T) {
+        self._value = new_value
+    }
+    
+    func map(self, func: Callable[[T], K]) -> 'Container[K]' {
+        """映射容器值"""
+        return Container(func(self._value))
+    }
+    
+    func __str__(self) -> str {
+        return f"Container({self._value})"
+}
+
+class Pair(Generic[T, K]) {
+    """泛型键值对类"""
+    
+    func __init__(self, first: T, second: K) {
+        self.first: T = first
+        self.second: K = second
+    }
+    
+    func swap(self) -> 'Pair[K, T]' {
+        """交换键值对"""
+        return Pair(self.second, self.first)
+    }
+    
+    func __str__(self) -> str {
+        return f"Pair({self.first}, {self.second})"
+}
+
+# 5. 约束泛型
+class Calculator(Generic[Number]) {
+    """数值计算器"""
+    
+    func __init__(self, initial_value: Number) {
+        self.value: Number = initial_value
+    }
+    
+    func add(self, other: Number) -> Number {
+        self.value += other
+        return self.value
+    }
+    
+    func multiply(self, other: Number) -> Number {
+        self.value *= other
+        return self.value
+    }
+    
+    func divide(self, other: Number) -> float {
+        return float(self.value) / float(other)
+    }
+    
+    func __str__(self) -> str {
+        return f"Calculator({self.value})"
+}
+
+# 6. 抽象基类和协议
+class Drawable(ABC) {
+    """可绘制对象抽象基类"""
+    
+    @abstractmethod
+    func draw(self) -> str {
+        pass
+    
+    @abstractmethod
+    func get_area(self) -> float {
+        pass
+}
+
+class Shape(Drawable) {
+    """形状基类"""
+    
+    func __init__(self, name: str) {
+        self.name = name
+    }
+    
+    func __str__(self) -> str {
+        return f"{self.name}(area={self.get_area():.2f})"
+}
+
+class Rectangle(Shape) {
+    """矩形类"""
+    
+    func __init__(self, width: float, height: float) {
+        super().__init__("Rectangle")
+        self.width = width
+        self.height = height
+    }
+    
+    func draw(self) -> str {
+        return f"Drawing rectangle {self.width}x{self.height}"
+    }
+    
+    func get_area(self) -> float {
+        return self.width * self.height
+}
+
+class Circle(Shape) {
+    """圆形类"""
+    
+    func __init__(self, radius: float) {
+        super().__init__("Circle")
+        self.radius = radius
+    }
+    
+    func draw(self) -> str {
+        return f"Drawing circle with radius {self.radius}"
+    }
+    
+    func get_area(self) -> float {
+        return 3.14159 * self.radius * self.radius
+}
+
+# 7. 高级泛型模式
+class Result(Generic[T]) {
+    """结果类型，类似Rust的Result"""
+    
+    func __init__(self, value: T = None, error: Exception = None) {
+        self._value = value
+        self._error = error
+    }
+    
+    @classmethod
+    func ok(cls, value: T) -> 'Result[T]' {
+        return cls(value=value)
+    }
+    
+    @classmethod
+    func error(cls, error: Exception) -> 'Result[T]' {
+        return cls(error=error)
+    }
+    
+    func is_ok(self) -> bool {
+        return self._error is None
+    }
+    
+    func is_error(self) -> bool {
+        return self._error is not None
+    }
+    
+    func unwrap(self) -> T {
+        if self.is_error() {
+            raise self._error
+        }
+        return self._value
+    }
+    
+    func unwrap_or(self, default: T) -> T {
+        if self.is_error() {
+            return default
+        }
+        return self._value
+    }
+    
+    func map(self, func: Callable[[T], K]) -> 'Result[K]' {
+        if self.is_error() {
+            return Result.error(self._error)
+        }
+        try {
+            return Result.ok(func(self._value))
+        } catch Exception as e {
+            return Result.error(e)
+        }
+    }
+    
+    func __str__(self) -> str {
+        if self.is_ok() {
+            return f"Ok({self._value})"
+        } else {
+            return f"Error({self._error})"
+        }
+}
+
+class Option(Generic[T]) {
+    """可选类型，类似Rust的Option"""
+    
+    func __init__(self, value: T = None) {
+        self._value = value
+        self._has_value = value is not None
+    }
+    
+    @classmethod
+    func some(cls, value: T) -> 'Option[T]' {
+        return cls(value)
+    }
+    
+    @classmethod
+    func none(cls) -> 'Option[T]' {
+        return cls()
+    }
+    
+    func is_some(self) -> bool {
+        return self._has_value
+    }
+    
+    func is_none(self) -> bool {
+        return not self._has_value
+    }
+    
+    func unwrap(self) -> T {
+        if self.is_none() {
+            raise ValueError("Called unwrap on None value")
+        }
+        return self._value
+    }
+    
+    func unwrap_or(self, default: T) -> T {
+        if self.is_none() {
+            return default
+        }
+        return self._value
+    }
+    
+    func map(self, func: Callable[[T], K]) -> 'Option[K]' {
+        if self.is_none() {
+            return Option.none()
+        }
+        return Option.some(func(self._value))
+    }
+    
+    func filter(self, predicate: Callable[[T], bool]) -> 'Option[T]' {
+        if self.is_none() or not predicate(self._value) {
+            return Option.none()
+        }
+        return self
+    }
+    
+    func __str__(self) -> str {
+        if self.is_some() {
+            return f"Some({self._value})"
+        } else {
+            return "None"
+        }
+}
+
+# 8. 类型检查工具
+class TypeChecker {
+    """运行时类型检查工具"""
+    
+    @staticmethod
+    func check_type(value: Any, expected_type: type) -> bool {
+        """检查值是否符合期望类型"""
+        return isinstance(value, expected_type)
+    }
+    
+    @staticmethod
+    func validate_function_signature(func: Callable, *args, **kwargs) -> bool {
+        """验证函数调用参数类型"""
+        try {
+            var sig = inspect.signature(func)
+            var bound = sig.bind(*args, **kwargs)
+            bound.apply_defaults()
+            
+            for param_name, param_value in bound.arguments.items() {
+                var param = sig.parameters[param_name]
+                if param.annotation != inspect.Parameter.empty {
+                    if not isinstance(param_value, param.annotation) {
+                        print(f"Type mismatch for parameter '{param_name}': "
+                              f"expected {param.annotation.__name__}, "
+                              f"got {type(param_value).__name__}")
+                        return False
+                    }
+                }
+            }
+            return True
+        } catch Exception as e {
+            print(f"Signature validation error: {e}")
+            return False
+        }
+    }
+    
+    @staticmethod
+    func get_type_info(obj: Any) -> Dict[str, Any] {
+        """获取对象类型信息"""
+        return {
+            "type": type(obj).__name__,
+            "module": type(obj).__module__,
+            "mro": [cls.__name__ for cls in type(obj).__mro__],
+            "attributes": [attr for attr in dir(obj) if not attr.startswith('_')],
+            "callable": callable(obj)
+        }
+    }
+}
+
+# 9. 工厂模式与泛型
+class Factory(Generic[T]) {
+    """泛型工厂类"""
+    
+    func __init__(self, constructor: Callable[..., T]) {
+        self._constructor = constructor
+        self._instances: List[T] = []
+    }
+    
+    func create(self, *args, **kwargs) -> T {
+        """创建新实例"""
+        var instance = self._constructor(*args, **kwargs)
+        self._instances.append(instance)
+        return instance
+    }
+    
+    func get_instances(self) -> List[T] {
+        """获取所有创建的实例"""
+        return self._instances.copy()
+    }
+    
+    func clear(self) {
+        """清空实例列表"""
+        self._instances.clear()
+    }
+}
+
+# 10. 高级类型操作
+func safe_divide(a: Number, b: Number) -> Result[float] {
+    """安全除法操作"""
+    if b == 0 {
+        return Result.error(ZeroDivisionError("Division by zero"))
+    }
+    return Result.ok(float(a) / float(b))
+}
+
+func find_item(items: List[T], predicate: Callable[[T], bool]) -> Option[T] {
+    """查找满足条件的第一个元素"""
+    for item in items {
+        if predicate(item) {
+            return Option.some(item)
+        }
+    }
+    return Option.none()
+}
+
+func chain_operations(value: T, *operations: Callable[[Any], Any]) -> Any {
+    """链式操作"""
+    var result = value
+    for operation in operations {
+        result = operation(result)
+    }
+    return result
+}
+
+# 11. 主函数
+func main() {
+    print("=== AquaScript 类型系统和泛型示例 ===\n")
+    
+    # 1. 基本类型注解测试
+    print("1. 基本类型注解测试:")
+    print("add_numbers(5, 3):", add_numbers(5, 3))
+    print("process_text('Hello', True):", process_text("Hello", True))
+    print("get_user_info(1):", get_user_info(1))
+    print("get_user_info(-1):", get_user_info(-1))
+    print()
+    
+    # 2. 泛型函数测试
+    print("2. 泛型函数测试:")
+    print("identity(42):", identity(42))
+    print("identity('hello'):", identity("hello"))
+    print("first_element([1, 2, 3]):", first_element([1, 2, 3]))
+    print("first_element([]):", first_element([]))
+    print("swap_tuple((1, 'a')):", swap_tuple((1, "a")))
+    print()
+    
+    # 3. 泛型类测试
+    print("3. 泛型类测试:")
+    var int_container = Container(42)
+    var str_container = Container("hello")
+    print("int_container:", int_container)
+    print("str_container:", str_container)
+    
+    var mapped_container = int_container.map(lambda x: x * 2)
+    print("mapped_container:", mapped_container)
+    
+    var pair = Pair("key", 123)
+    print("pair:", pair)
+    print("swapped pair:", pair.swap())
+    print()
+    
+    # 4. 约束泛型测试
+    print("4. 约束泛型测试:")
+    var int_calc = Calculator(10)
+    var float_calc = Calculator(3.14)
+    
+    print("int_calc.add(5):", int_calc.add(5))
+    print("float_calc.multiply(2.0):", float_calc.multiply(2.0))
+    print("int_calc.divide(3):", int_calc.divide(3))
+    print()
+    
+    # 5. 抽象基类测试
+    print("5. 抽象基类测试:")
+    var shapes: List[Shape] = [
+        Rectangle(5.0, 3.0),
+        Circle(2.5),
+        Rectangle(4.0, 4.0)
+    ]
+    
+    for shape in shapes {
+        print(f"{shape.draw()} -> {shape}")
+    }
+    print()
+    
+    # 6. Result类型测试
+    print("6. Result类型测试:")
+    var result1 = safe_divide(10, 2)
+    var result2 = safe_divide(10, 0)
+    
+    print("safe_divide(10, 2):", result1)
+    print("safe_divide(10, 0):", result2)
+    
+    if result1.is_ok() {
+        print("Result1 value:", result1.unwrap())
+    }
+    
+    print("Result2 with default:", result2.unwrap_or(0.0))
+    
+    var mapped_result = result1.map(lambda x: x * 2)
+    print("Mapped result:", mapped_result)
+    print()
+    
+    # 7. Option类型测试
+    print("7. Option类型测试:")
+    var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    
+    var even_number = find_item(numbers, lambda x: x % 2 == 0)
+    var large_number = find_item(numbers, lambda x: x > 15)
+    
+    print("First even number:", even_number)
+    print("Number > 15:", large_number)
+    
+    var doubled_even = even_number.map(lambda x: x * 2)
+    print("Doubled even number:", doubled_even)
+    
+    var filtered_option = Option.some(10).filter(lambda x: x > 5)
+    print("Filtered option (10 > 5):", filtered_option)
+    print()
+    
+    # 8. 类型检查测试
+    print("8. 类型检查测试:")
+    print("TypeChecker.check_type(42, int):", TypeChecker.check_type(42, int))
+    print("TypeChecker.check_type('hello', int):", TypeChecker.check_type("hello", int))
+    
+    print("Validating add_numbers(5, 3):", 
+          TypeChecker.validate_function_signature(add_numbers, 5, 3))
+    print("Validating add_numbers('5', 3):", 
+          TypeChecker.validate_function_signature(add_numbers, "5", 3))
+    
+    var type_info = TypeChecker.get_type_info(int_container)
+    print("Type info for int_container:", type_info)
+    print()
+    
+    # 9. 工厂模式测试
+    print("9. 工厂模式测试:")
+    var rect_factory = Factory(Rectangle)
+    var circle_factory = Factory(Circle)
+    
+    var rect1 = rect_factory.create(3.0, 4.0)
+    var rect2 = rect_factory.create(5.0, 2.0)
+    var circle1 = circle_factory.create(1.5)
+    
+    print("Created rectangles:", len(rect_factory.get_instances()))
+    print("Created circles:", len(circle_factory.get_instances()))
+    print()
+    
+    # 10. 链式操作测试
+    print("10. 链式操作测试:")
+    var result = chain_operations(
+        5,
+        lambda x: x * 2,
+        lambda x: x + 3,
+        lambda x: x ** 2
+    )
+    print("Chain operations result:", result)
+    print()
+    
+    print("所有类型系统和泛型示例完成!")
+
+# 运行主函数
+if __name__ == "__main__" {
+    main()
+}

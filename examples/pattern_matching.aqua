@@ -1,0 +1,492 @@
+# AquaScript 模式匹配和解构示例
+# 展示模式匹配、解构赋值等高级特性
+
+import typing.(Union, List, Dict, Tuple, Optional, Any)
+import enum.Enum
+import dataclasses.dataclass
+
+# 1. 基本模式匹配（使用match语句）
+func basic_pattern_matching(value: Any) -> str {
+    """基本模式匹配示例"""
+    match value {
+        case 0:
+            return "零"
+        case 1:
+            return "一"
+        case 2:
+            return "二"
+        case int() if value > 10:
+            return f"大于10的整数: {value}"
+        case int():
+            return f"其他整数: {value}"
+        case str() if len(value) > 5:
+            return f"长字符串: {value}"
+        case str():
+            return f"短字符串: {value}"
+        case list() if len(value) == 0:
+            return "空列表"
+        case list():
+            return f"非空列表，长度: {len(value)}"
+        case _:
+            return f"未知类型: {type(value).__name__}"
+    }
+}
+
+# 2. 序列解构
+func sequence_destructuring() {
+    """序列解构示例"""
+    print("=== 序列解构 ===")
+    
+    # 列表解构
+    var numbers = [1, 2, 3, 4, 5]
+    var [first, second, *rest] = numbers
+    print(f"first: {first}, second: {second}, rest: {rest}")
+    
+    # 元组解构
+    var point = (10, 20, 30)
+    var (x, y, z) = point
+    print(f"x: {x}, y: {y}, z: {z}")
+    
+    # 嵌套解构
+    var nested = [[1, 2], [3, 4], [5, 6]]
+    var [[a, b], [c, d], [e, f]] = nested
+    print(f"a: {a}, b: {b}, c: {c}, d: {d}, e: {e}, f: {f}")
+    
+    # 忽略某些值
+    var data = [1, 2, 3, 4, 5, 6]
+    var [head, _, _, *tail] = data
+    print(f"head: {head}, tail: {tail}")
+}
+
+# 3. 字典解构
+func dict_destructuring() {
+    """字典解构示例"""
+    print("=== 字典解构 ===")
+    
+    var user = {
+        "name": "Alice",
+        "age": 30,
+        "email": "alice@example.com",
+        "city": "New York"
+    }
+    
+    # 基本字典解构
+    var {"name": name, "age": age, **other_info} = user
+    print(f"name: {name}, age: {age}")
+    print(f"other_info: {other_info}")
+    
+    # 带默认值的解构
+    var {"name": user_name, "country": country = "Unknown"} = user
+    print(f"user_name: {user_name}, country: {country}")
+}
+
+# 4. 类和对象的模式匹配
+@dataclass
+class Point {
+    x: float
+    y: float
+}
+
+@dataclass
+class Circle {
+    center: Point
+    radius: float
+}
+
+@dataclass
+class Rectangle {
+    top_left: Point
+    width: float
+    height: float
+}
+
+class Color(Enum) {
+    RED = "red"
+    GREEN = "green"
+    BLUE = "blue"
+    YELLOW = "yellow"
+}
+
+@dataclass
+class Shape {
+    geometry: Union[Circle, Rectangle]
+    color: Color
+    filled: bool = False
+}
+
+func analyze_shape(shape: Shape) -> str {
+    """分析形状的模式匹配"""
+    match shape {
+        case Shape(geometry=Circle(center=Point(x=0, y=0), radius=r), color=Color.RED):
+            return f"红色圆形，半径{r}，位于原点"
+        
+        case Shape(geometry=Circle(radius=r), color=color) if r > 10:
+            return f"大{color.value}圆形，半径{r}"
+        
+        case Shape(geometry=Circle(radius=r), color=color):
+            return f"小{color.value}圆形，半径{r}"
+        
+        case Shape(geometry=Rectangle(width=w, height=h), color=color) if w == h:
+            return f"{color.value}正方形，边长{w}"
+        
+        case Shape(geometry=Rectangle(width=w, height=h), color=color):
+            return f"{color.value}矩形，{w}x{h}"
+        
+        case _:
+            return "未知形状"
+    }
+}
+
+# 5. 联合类型的模式匹配
+class Result:
+    pass
+
+@dataclass
+class Success(Result) {
+    value: Any
+}
+
+@dataclass
+class Error(Result) {
+    message: str
+    code: int = 0
+}
+
+func handle_result(result: Result) -> str {
+    """处理结果的模式匹配"""
+    match result {
+        case Success(value=value) if isinstance(value, int):
+            return f"成功获得整数: {value}"
+        
+        case Success(value=value) if isinstance(value, str):
+            return f"成功获得字符串: '{value}'"
+        
+        case Success(value=value):
+            return f"成功获得值: {value} (类型: {type(value).__name__})"
+        
+        case Error(message=msg, code=404):
+            return f"未找到错误: {msg}"
+        
+        case Error(message=msg, code=500):
+            return f"服务器错误: {msg}"
+        
+        case Error(message=msg, code=code):
+            return f"错误 {code}: {msg}"
+        
+        case _:
+            return "未知结果类型"
+    }
+}
+
+# 6. 高级模式匹配
+class TreeNode:
+    pass
+
+@dataclass
+class Leaf(TreeNode) {
+    value: Any
+}
+
+@dataclass
+class Branch(TreeNode) {
+    left: TreeNode
+    right: TreeNode
+}
+
+func tree_sum(node: TreeNode) -> int {
+    """计算树的所有叶子节点值之和"""
+    match node {
+        case Leaf(value=int() as val):
+            return val
+        
+        case Leaf(value=_):
+            return 0
+        
+        case Branch(left=left, right=right):
+            return tree_sum(left) + tree_sum(right)
+        
+        case _:
+            return 0
+    }
+}
+
+func tree_depth(node: TreeNode) -> int {
+    """计算树的深度"""
+    match node {
+        case Leaf():
+            return 1
+        
+        case Branch(left=left, right=right):
+            return 1 + max(tree_depth(left), tree_depth(right))
+        
+        case _:
+            return 0
+    }
+}
+
+# 7. 列表模式匹配
+func analyze_list(items: List[Any]) -> str {
+    """分析列表的模式匹配"""
+    match items {
+        case []:
+            return "空列表"
+        
+        case [x]:
+            return f"单元素列表: {x}"
+        
+        case [x, y]:
+            return f"双元素列表: {x}, {y}"
+        
+        case [x, y, z]:
+            return f"三元素列表: {x}, {y}, {z}"
+        
+        case [first, *middle, last] if len(middle) == 0:
+            return f"两元素列表: {first}, {last}"
+        
+        case [first, *middle, last]:
+            return f"多元素列表: 首={first}, 中间={len(middle)}个, 尾={last}"
+        
+        case _:
+            return "未知列表格式"
+    }
+}
+
+# 8. 字符串模式匹配
+func analyze_string(text: str) -> str {
+    """分析字符串的模式匹配"""
+    match text {
+        case "":
+            return "空字符串"
+        
+        case str() if text.startswith("http://"):
+            return f"HTTP URL: {text}"
+        
+        case str() if text.startswith("https://"):
+            return f"HTTPS URL: {text}"
+        
+        case str() if text.startswith("ftp://"):
+            return f"FTP URL: {text}"
+        
+        case str() if "@" in text and "." in text:
+            return f"可能的邮箱地址: {text}"
+        
+        case str() if text.isdigit():
+            return f"数字字符串: {text}"
+        
+        case str() if text.isalpha():
+            return f"字母字符串: {text}"
+        
+        case str() if len(text) > 100:
+            return f"长文本 ({len(text)} 字符): {text[:50]}..."
+        
+        case str():
+            return f"普通字符串: {text}"
+        
+        case _:
+            return "非字符串类型"
+    }
+}
+
+# 9. 复杂数据结构的模式匹配
+@dataclass
+class Person {
+    name: str
+    age: int
+    address: Dict[str, str]
+    hobbies: List[str]
+}
+
+func analyze_person(person: Person) -> str {
+    """分析人员信息的模式匹配"""
+    match person {
+        case Person(name=name, age=age) if age < 18:
+            return f"{name} 是未成年人 ({age}岁)"
+        
+        case Person(name=name, age=age, address={"country": "China"}):
+            return f"{name} 是中国人 ({age}岁)"
+        
+        case Person(name=name, hobbies=hobbies) if "programming" in hobbies:
+            return f"{name} 是程序员"
+        
+        case Person(name=name, hobbies=hobbies) if len(hobbies) > 5:
+            return f"{name} 有很多爱好: {', '.join(hobbies[:3])}..."
+        
+        case Person(name=name, age=age):
+            return f"{name} ({age}岁)"
+        
+        case _:
+            return "未知人员信息"
+    }
+}
+
+# 10. 自定义模式匹配类
+class CustomPattern {
+    """自定义模式匹配类"""
+    
+    func __init__(self, value: Any) {
+        self.value = value
+    }
+    
+    func __match_args__(self) {
+        return ("value",)
+    }
+    
+    func __eq__(self, other) {
+        if isinstance(other, CustomPattern) {
+            return self.value == other.value
+        }
+        return self.value == other
+    }
+    
+    func __str__(self) {
+        return f"CustomPattern({self.value})"
+}
+
+func match_custom_pattern(pattern: CustomPattern) -> str {
+    """匹配自定义模式"""
+    match pattern {
+        case CustomPattern(value=42):
+            return "找到答案!"
+        
+        case CustomPattern(value=str() as s) if len(s) > 10:
+            return f"长字符串模式: {s}"
+        
+        case CustomPattern(value=list() as lst) if len(lst) > 0:
+            return f"非空列表模式: {lst}"
+        
+        case CustomPattern(value=value):
+            return f"自定义模式值: {value}"
+        
+        case _:
+            return "未匹配的模式"
+    }
+}
+
+# 11. 主函数
+func main() {
+    print("=== AquaScript 模式匹配和解构示例 ===\n")
+    
+    # 1. 基本模式匹配测试
+    print("1. 基本模式匹配测试:")
+    var test_values = [0, 1, 15, "hello", "very long string", [], [1, 2, 3], {"key": "value"}]
+    for value in test_values {
+        print(f"{value} -> {basic_pattern_matching(value)}")
+    }
+    print()
+    
+    # 2. 序列解构测试
+    sequence_destructuring()
+    print()
+    
+    # 3. 字典解构测试
+    dict_destructuring()
+    print()
+    
+    # 4. 形状分析测试
+    print("4. 形状分析测试:")
+    var shapes = [
+        Shape(Circle(Point(0, 0), 5), Color.RED),
+        Shape(Circle(Point(10, 10), 15), Color.BLUE),
+        Shape(Rectangle(Point(0, 0), 10, 10), Color.GREEN),
+        Shape(Rectangle(Point(5, 5), 8, 12), Color.YELLOW)
+    ]
+    
+    for shape in shapes {
+        print(analyze_shape(shape))
+    }
+    print()
+    
+    # 5. 结果处理测试
+    print("5. 结果处理测试:")
+    var results = [
+        Success(42),
+        Success("hello world"),
+        Success([1, 2, 3]),
+        Error("Not found", 404),
+        Error("Internal server error", 500),
+        Error("Bad request", 400)
+    ]
+    
+    for result in results {
+        print(handle_result(result))
+    }
+    print()
+    
+    # 6. 树结构测试
+    print("6. 树结构测试:")
+    var tree = Branch(
+        Branch(Leaf(1), Leaf(2)),
+        Branch(Leaf(3), Branch(Leaf(4), Leaf(5)))
+    )
+    
+    print(f"树的总和: {tree_sum(tree)}")
+    print(f"树的深度: {tree_depth(tree)}")
+    print()
+    
+    # 7. 列表分析测试
+    print("7. 列表分析测试:")
+    var test_lists = [
+        [],
+        [1],
+        [1, 2],
+        [1, 2, 3],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    ]
+    
+    for lst in test_lists {
+        print(f"{lst} -> {analyze_list(lst)}")
+    }
+    print()
+    
+    # 8. 字符串分析测试
+    print("8. 字符串分析测试:")
+    var test_strings = [
+        "",
+        "http://example.com",
+        "https://secure.example.com",
+        "user@example.com",
+        "12345",
+        "hello",
+        "This is a very long string that contains more than one hundred characters to test the long text pattern matching functionality."
+    ]
+    
+    for text in test_strings {
+        print(f"'{text}' -> {analyze_string(text)}")
+    }
+    print()
+    
+    # 9. 人员信息分析测试
+    print("9. 人员信息分析测试:")
+    var people = [
+        Person("小明", 16, {"country": "China", "city": "Beijing"}, ["reading", "gaming"]),
+        Person("Alice", 25, {"country": "China", "city": "Shanghai"}, ["programming", "music"]),
+        Person("Bob", 30, {"country": "USA", "city": "New York"}, ["sports", "movies", "cooking", "traveling", "photography", "hiking"]),
+        Person("Charlie", 28, {"country": "UK", "city": "London"}, ["reading"])
+    ]
+    
+    for person in people {
+        print(analyze_person(person))
+    }
+    print()
+    
+    # 10. 自定义模式测试
+    print("10. 自定义模式测试:")
+    var custom_patterns = [
+        CustomPattern(42),
+        CustomPattern("this is a very long string"),
+        CustomPattern([1, 2, 3]),
+        CustomPattern({"key": "value"}),
+        CustomPattern(None)
+    ]
+    
+    for pattern in custom_patterns {
+        print(f"{pattern} -> {match_custom_pattern(pattern)}")
+    }
+    print()
+    
+    print("所有模式匹配和解构示例完成!")
+
+# 运行主函数
+if __name__ == "__main__" {
+    main()
+}

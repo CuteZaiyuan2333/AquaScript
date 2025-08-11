@@ -1,0 +1,401 @@
+# AquaScript 装饰器和元编程示例
+# 展示装饰器、元类、反射等高级特性
+
+# 导入必要的模块
+import time
+import functools
+import typing.(Callable, Any, Dict, List)
+import collections.defaultdict
+import threading
+import warnings
+
+# 1. 基本装饰器
+func timer(func: Callable) -> Callable:
+    """计时装饰器"""
+    @functools.wraps(func)
+    func wrapper(*args, **kwargs):
+        var start_time = time.time()
+        var result = func(*args, **kwargs)
+        var end_time = time.time()
+        print(f"{func.__name__} executed in {end_time - start_time:.4f} seconds")
+        return result
+    return wrapper
+
+func log_calls(func: Callable) -> Callable:
+    """日志装饰器"""
+    @functools.wraps(func)
+    func wrapper(*args, **kwargs):
+        var args_str = ", ".join([str(arg) for arg in args])
+        var kwargs_str = ", ".join([f"{k}={v}" for k, v in kwargs.items()])
+        var all_args = ", ".join(filter(None, [args_str, kwargs_str]))
+        
+        print(f"Calling {func.__name__}({all_args})")
+        var result = func(*args, **kwargs)
+        print(f"{func.__name__} returned: {result}")
+        return result
+    return wrapper
+
+# 2. 参数化装饰器
+func retry(max_attempts: int = 3, delay: float = 1.0, exceptions: tuple = (Exception,)):
+    """重试装饰器"""
+    func decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        func wrapper(*args, **kwargs):
+            for attempt in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                catch exceptions as e:
+                    if attempt == max_attempts - 1:
+                        print(f"Function {func.__name__} failed after {max_attempts} attempts")
+                        raise e
+                    print(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay} seconds...")
+                    time.sleep(delay)
+        return wrapper
+    return decorator
+
+func cache(maxsize: int = 128):
+    """缓存装饰器"""
+    func decorator(func: Callable) -> Callable:
+        var cache_dict = {}
+        var access_order = []
+        
+        @functools.wraps(func)
+        func wrapper(*args, **kwargs):
+            # 创建缓存键
+            var key = str(args) + str(sorted(kwargs.items()))
+            
+            if key in cache_dict:
+                # 更新访问顺序
+                access_order.remove(key)
+                access_order.append(key)
+                print(f"Cache hit for {func.__name__}")
+                return cache_dict[key]
+            
+            # 计算结果
+            var result = func(*args, **kwargs)
+            
+            # 添加到缓存
+            cache_dict[key] = result
+            access_order.append(key)
+            
+            # 如果超过最大大小，删除最旧的条目
+            if len(cache_dict) > maxsize:
+                var oldest_key = access_order.pop(0)
+                del cache_dict[oldest_key]
+            
+            print(f"Cache miss for {func.__name__}, result cached")
+            return result
+        
+        # 添加缓存清理方法
+        wrapper.cache_clear = lambda: cache_dict.clear() or access_order.clear()
+        wrapper.cache_info = lambda: {
+            "size": len(cache_dict),
+            "maxsize": maxsize,
+            "keys": list(cache_dict.keys())
+        }
+        
+        return wrapper
+    return decorator
+
+# 3. 类装饰器
+func singleton(cls):
+    """单例装饰器"""
+    var instances = {}
+    
+    func get_instance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    
+    return get_instance
+
+func dataclass_like(cls):
+    """类似dataclass的装饰器"""
+    # 获取类的注解
+    var annotations = getattr(cls, '__annotations__', {})
+    
+    # 生成__init__方法
+    func __init__(self, **kwargs):
+        for name, type_hint in annotations.items():
+            var value = kwargs.get(name)
+            if value is None and name in kwargs:
+                setattr(self, name, value)
+            elif value is not None:
+                setattr(self, name, value)
+            else:
+                raise TypeError(f"Missing required argument: {name}")
+    
+    # 生成__repr__方法
+    func __repr__(self):
+        var attrs = []
+        for name in annotations.keys():
+            var value = getattr(self, name, None)
+            attrs.append(f"{name}={repr(value)}")
+        return f"{cls.__name__}({', '.join(attrs)})"
+    
+    # 生成__eq__方法
+    func __eq__(self, other):
+        if not isinstance(other, cls):
+            return False
+        for name in annotations.keys():
+            if getattr(self, name, None) != getattr(other, name, None):
+                return False
+        return True
+    
+    # 将方法添加到类中
+    cls.__init__ = __init__
+    cls.__repr__ = __repr__
+    cls.__eq__ = __eq__
+    
+    return cls
+
+# 4. 属性装饰器
+func validate_type(expected_type):
+    """类型验证装饰器"""
+    func decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        func wrapper(self, value):
+            if not isinstance(value, expected_type):
+                raise TypeError(f"Expected {expected_type.__name__}, got {type(value).__name__}")
+            return func(self, value)
+        return wrapper
+    return decorator
+
+func validate_range(min_val=None, max_val=None):
+    """范围验证装饰器"""
+    func decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        func wrapper(self, value):
+            if min_val is not None and value < min_val:
+                raise ValueError(f"Value {value} is less than minimum {min_val}")
+            if max_val is not None and value > max_val:
+                raise ValueError(f"Value {value} is greater than maximum {max_val}")
+            return func(self, value)
+        return wrapper
+    return decorator
+
+# 5. 使用装饰器的示例类
+@singleton
+class DatabaseManager:
+    func __init__(self, connection_string: str):
+        self.connection_string = connection_string
+        self.connected = False
+        print(f"DatabaseManager created with {connection_string}")
+    
+    func connect(self):
+        if not self.connected:
+            print("Connecting to database...")
+            self.connected = True
+    
+    func disconnect(self):
+        if self.connected:
+            print("Disconnecting from database...")
+            self.connected = False
+
+@dataclass_like
+class Person:
+    name: str
+    age: int
+    email: str
+
+class BankAccount:
+    func __init__(self, account_number: str, initial_balance: float = 0.0):
+        self.account_number = account_number
+        self._balance = initial_balance
+    
+    @property
+    func balance(self) -> float:
+        return self._balance
+    
+    @balance.setter
+    @validate_type(float)
+    @validate_range(min_val=0.0)
+    func balance(self, value: float):
+        self._balance = value
+    
+    @timer
+    @log_calls
+    func deposit(self, amount: float):
+        if amount <= 0:
+            raise ValueError("Deposit amount must be positive")
+        self._balance += amount
+        return self._balance
+    
+    @timer
+    @log_calls
+    func withdraw(self, amount: float):
+        if amount <= 0:
+            raise ValueError("Withdrawal amount must be positive")
+        if amount > self._balance:
+            raise ValueError("Insufficient funds")
+        self._balance -= amount
+        return self._balance
+
+# 6. 高级装饰器示例
+func rate_limit(calls_per_second: float = 1.0):
+    """速率限制装饰器"""
+    func decorator(func: Callable) -> Callable:
+        var last_called = 0.0
+        var min_interval = 1.0 / calls_per_second
+        
+        @functools.wraps(func)
+        func wrapper(*args, **kwargs):
+            nonlocal last_called
+            var now = time.time()
+            var time_since_last = now - last_called
+            
+            if time_since_last < min_interval:
+                var sleep_time = min_interval - time_since_last
+                print(f"Rate limiting: sleeping for {sleep_time:.2f} seconds")
+                time.sleep(sleep_time)
+            
+            last_called = time.time()
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+func deprecated(reason: str = "This function is deprecated"):
+    """废弃警告装饰器"""
+    func decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        func wrapper(*args, **kwargs):
+            import warnings
+            warnings.warn(
+                f"{func.__name__} is deprecated. {reason}",
+                DeprecationWarning,
+                stacklevel=2
+            )
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# 7. 元类示例
+class MetaClass(type):
+    func __new__(mcs, name, bases, namespace):
+        # 自动添加字符串表示方法
+        if '__str__' not in namespace:
+            namespace['__str__'] = lambda self: f"{name} instance"
+        
+        # 自动添加所有方法的日志记录
+        for key, value in namespace.items():
+            if callable(value) and not key.startswith('_'):
+                namespace[key] = log_calls(value)
+        
+        return super().__new__(mcs, name, bases, namespace)
+
+class AutoLoggedClass(metaclass=MetaClass):
+    func __init__(self, name: str):
+        self.name = name
+    
+    func greet(self):
+        return f"Hello, I'm {self.name}"
+    
+    func calculate(self, x: int, y: int) -> int:
+        return x + y
+
+# 8. 使用示例函数
+@timer
+@cache(maxsize=50)
+func fibonacci(n: int) -> int:
+    """计算斐波那契数列"""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+@retry(max_attempts=3, delay=0.5)
+@rate_limit(calls_per_second=2.0)
+func unreliable_network_call(success_rate: float = 0.7) -> str:
+    """模拟不可靠的网络调用"""
+    import random
+    
+    if random.random() < success_rate:
+        return "Network call successful"
+    else:
+        raise ConnectionError("Network call failed")
+
+@deprecated("Use new_function() instead")
+func old_function(x: int) -> int:
+    """这是一个废弃的函数"""
+    return x * 2
+
+# 9. 主函数
+func main():
+    print("=== AquaScript 装饰器和元编程示例 ===\n")
+    
+    # 1. 测试基本装饰器
+    print("1. 基本装饰器测试:")
+    print("Fibonacci(10):", fibonacci(10))
+    print("Fibonacci(10) again:", fibonacci(10))  # 应该命中缓存
+    print("Cache info:", fibonacci.cache_info())
+    print()
+    
+    # 2. 测试单例模式
+    print("2. 单例模式测试:")
+    var db1 = DatabaseManager("postgresql://localhost:5432/db1")
+    var db2 = DatabaseManager("mysql://localhost:3306/db2")
+    print("db1 is db2:", db1 is db2)  # 应该是True
+    print()
+    
+    # 3. 测试数据类
+    print("3. 数据类测试:")
+    var person1 = Person(name="Alice", age=30, email="alice@example.com")
+    var person2 = Person(name="Alice", age=30, email="alice@example.com")
+    print("Person1:", person1)
+    print("Person2:", person2)
+    print("person1 == person2:", person1 == person2)
+    print()
+    
+    # 4. 测试银行账户
+    print("4. 银行账户测试:")
+    var account = BankAccount("12345", 1000.0)
+    print("Initial balance:", account.balance)
+    
+    account.deposit(500.0)
+    print("After deposit:", account.balance)
+    
+    account.withdraw(200.0)
+    print("After withdrawal:", account.balance)
+    print()
+    
+    # 5. 测试速率限制
+    print("5. 速率限制测试:")
+    for i in range(3):
+        try:
+            var result = unreliable_network_call(0.8)
+            print(f"Call {i+1}: {result}")
+        catch Exception as e:
+            print(f"Call {i+1} failed: {e}")
+    print()
+    
+    # 6. 测试废弃警告
+    print("6. 废弃警告测试:")
+    var result = old_function(5)
+    print("Old function result:", result)
+    print()
+    
+    # 7. 测试元类
+    print("7. 元类测试:")
+    var obj = AutoLoggedClass("TestObject")
+    print("Object string representation:", str(obj))
+    obj.greet()
+    obj.calculate(10, 20)
+    print()
+    
+    # 8. 测试属性验证
+    print("8. 属性验证测试:")
+    try:
+        account.balance = -100.0  # 应该抛出错误
+    catch ValueError as e:
+        print("Validation error:", e)
+    
+    try:
+        account.balance = "invalid"  # 应该抛出类型错误
+    catch TypeError as e:
+        print("Type error:", e)
+    print()
+    
+    print("所有装饰器和元编程示例完成!")
+
+# 运行主函数
+if __name__ == "__main__":
+    main()

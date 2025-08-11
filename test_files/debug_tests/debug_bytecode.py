@@ -3,6 +3,11 @@
 
 import struct
 import json
+import sys
+import os
+
+# 添加项目根目录到路径
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from vm.optimized_aquavm import OpCode
 
 def parse_bytecode(filename):

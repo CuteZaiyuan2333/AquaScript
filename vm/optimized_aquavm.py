@@ -50,6 +50,7 @@ class OpCode(IntEnum):
     GT = 0x23
     LE = 0x24
     GE = 0x25
+    IN = 0x26              # 成员运算符
     
     # 逻辑运算
     AND = 0x30
@@ -76,6 +77,8 @@ class OpCode(IntEnum):
     SET_ITEM = 0x66        # 设置列表项
     BUILD_LIST = 0x67      # 构建列表
     SET_ATTR = 0x68        # 设置属性
+    BUILD_DICT = 0x7A      # 构建字典
+    BUILD_TUPLE = 0x6B     # 构建元组
     FORMAT_VALUE = 0x6C    # 格式化值为字符串
     
     # 迭代器操作
@@ -259,6 +262,7 @@ class OptimizedAquaVM:
             OpCode.GT: self._op_gt,
             OpCode.LE: self._op_le,
             OpCode.GE: self._op_ge,
+            OpCode.IN: self._op_in,
             OpCode.AND: self._op_and,
             OpCode.OR: self._op_or,
             OpCode.NOT: self._op_not,
@@ -276,6 +280,8 @@ class OptimizedAquaVM:
             OpCode.GET_ITEM: self._op_get_item,
             OpCode.SET_ITEM: self._op_set_item,
             OpCode.BUILD_LIST: self._op_build_list,
+            OpCode.BUILD_DICT: self._op_build_dict,
+            OpCode.BUILD_TUPLE: self._op_build_tuple,
             OpCode.SET_ATTR: self._op_set_attr,
             OpCode.FORMAT_VALUE: self._op_format_value,
             OpCode.IMPORT_MODULE: self._op_import_module,
@@ -668,6 +674,16 @@ class OptimizedAquaVM:
         except TypeError as e:
             raise TypeMismatchError(f"Cannot compare {type(a).__name__} >= {type(b).__name__}: {e}")
     
+    def _op_in(self, operand):
+        if len(self.stack) < 2:
+            raise StackUnderflowError("IN requires 2 operands")
+        b = self.stack.pop()  # 容器
+        a = self.stack.pop()  # 要查找的元素
+        try:
+            self.stack.append(a in b)
+        except TypeError as e:
+            raise TypeMismatchError(f"Cannot check if {type(a).__name__} is in {type(b).__name__}: {e}")
+    
     def _op_and(self, operand):
         if len(self.stack) < 2:
             raise StackUnderflowError("AND requires 2 operands")
@@ -892,6 +908,37 @@ class OptimizedAquaVM:
         
         # 将列表推入栈
         self.stack.append(elements)
+    
+    def _op_build_dict(self, operand):
+        """构建字典，operand是键值对个数"""
+        if len(self.stack) < operand * 2:
+            raise StackUnderflowError(f"BUILD_DICT requires {operand * 2} operands")
+        
+        # 构建字典
+        pairs = {}
+        for _ in range(operand):
+            value = self.stack.pop()
+            key = self.stack.pop()
+            pairs[key] = value
+        
+        # 将字典推入栈
+        self.stack.append(pairs)
+    
+    def _op_build_tuple(self, operand):
+        """构建元组，operand是元素个数"""
+        if len(self.stack) < operand:
+            raise StackUnderflowError(f"BUILD_TUPLE requires {operand} operands")
+        
+        # 从栈中弹出指定数量的元素
+        elements = []
+        for _ in range(operand):
+            elements.append(self.stack.pop())
+        
+        # 由于是从栈中弹出的，需要反转顺序
+        elements.reverse()
+        
+        # 将元组推入栈
+        self.stack.append(tuple(elements))
     
     def _op_set_attr(self, operand):
         """设置对象属性"""

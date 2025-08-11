@@ -1,0 +1,45 @@
+# AquaScript示例程序：简单猜数字游戏
+
+func number_guessing_game():
+    print("=== 猜数字游戏 ===")
+    print("我想了一个1到100之间的数字，你能猜到吗？")
+    
+    var secret_number = 42
+    var attempts = 0
+    var max_attempts = 7
+    var guessed = False
+    
+    var user_guesses = [50, 30, 40, 45, 42]
+    var guess_index = 0
+    
+    while attempts < max_attempts and not guessed and guess_index < len(user_guesses):
+        var guess = user_guesses[guess_index]
+        attempts = attempts + 1
+        guess_index = guess_index + 1
+        
+        print("第 " + str(attempts) + " 次猜测: " + str(guess))
+        
+        if guess == secret_number:
+            print("恭喜！你猜对了！")
+            print("你用了 " + str(attempts) + " 次猜测。")
+            guessed = True
+        else:
+            if guess < secret_number:
+                print("太小了！再试试更大的数字。")
+            else:
+                print("太大了！再试试更小的数字。")
+    
+    if not guessed:
+        print("游戏结束！正确答案是 " + str(secret_number))
+    
+    return guessed
+
+func main():
+    print("AquaScript 简单游戏示例")
+    print("========================")
+    
+    number_guessing_game()
+    
+    print("感谢游玩！")
+
+main()

@@ -1,0 +1,100 @@
+# AquaScript示例程序：数据结构和算法（简化版）
+
+# 列表操作
+func list_operations():
+    print("=== 列表操作示例 ===")
+    
+    var numbers = [1, 2, 3, 4, 5]
+    var fruits = ["apple", "banana", "orange"]
+    
+    print("原始数字列表: " + str(numbers))
+    print("水果列表: " + str(fruits))
+    print("数字列表长度: " + str(len(numbers)))
+    print("第一个水果: " + fruits[0])
+    
+    return True
+
+# 字典操作
+func dictionary_operations():
+    print("")
+    print("=== 字典操作示例 ===")
+    
+    var student = {
+        "name": "张三",
+        "age": 20,
+        "grade": "A"
+    }
+    
+    print("学生信息: " + str(student))
+    print("学生姓名: " + student["name"])
+    print("学生年龄: " + str(student["age"]))
+    
+    student["age"] = 21
+    student["city"] = "北京"
+    print("更新后的学生信息: " + str(student))
+    
+    return True
+
+# 冒泡排序
+func bubble_sort(arr):
+    var n = len(arr)
+    var i = 0
+    
+    while i < n - 1:
+        var j = 0
+        while j < n - i - 1:
+            if arr[j] > arr[j + 1]:
+                var temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+            j = j + 1
+        i = i + 1
+    
+    return arr
+
+# 线性搜索
+func linear_search(arr, target):
+    var i = 0
+    while i < len(arr):
+        if arr[i] == target:
+            return i
+        i = i + 1
+    return -1
+
+# 阶乘函数
+func factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+# 主程序
+func main():
+    print("AquaScript 数据结构和算法示例（简化版）")
+    print("==========================================")
+    
+    list_operations()
+    dictionary_operations()
+    
+    print("")
+    print("=== 排序算法示例 ===")
+    var unsorted = [64, 34, 25, 12, 22, 11, 90]
+    print("原始数组: " + str(unsorted))
+    
+    var sorted_array = bubble_sort([64, 34, 25, 12, 22, 11, 90])
+    print("冒泡排序结果: " + str(sorted_array))
+    
+    print("")
+    print("=== 搜索算法示例 ===")
+    var search_array = [11, 12, 22, 25, 34, 64, 90]
+    var target = 25
+    var result = linear_search(search_array, target)
+    print("在数组 " + str(search_array) + " 中搜索 " + str(target))
+    print("线性搜索结果: 索引 " + str(result))
+    
+    print("")
+    print("=== 数学函数示例 ===")
+    var n = 5
+    print(str(n) + "! = " + str(factorial(n)))
+
+main()

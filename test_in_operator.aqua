@@ -1,0 +1,31 @@
+# 测试 in 操作符
+print("=== 测试 in 操作符 ===")
+
+# 测试列表中的成员检查
+var numbers = [1, 2, 3, 4, 5]
+var item = 3
+
+if item in numbers:
+    print("3 在列表中")
+else:
+    print("3 不在列表中")
+
+# 测试字符串中的子字符串检查
+var text = "Hello World"
+var substring = "World"
+
+if substring in text:
+    print("'World' 在字符串中")
+else:
+    print("'World' 不在字符串中")
+
+# 测试字典中的键检查
+var mapping = {"a": 1, "b": 2, "c": 3}
+var key = "b"
+
+if key in mapping:
+    print("键 'b' 在字典中")
+else:
+    print("键 'b' 不在字典中")
+
+print("测试完成")

@@ -1,0 +1,19 @@
+# 测试 in 操作符
+numbers = [1, 2, 3, 4, 5]
+text = "hello world"
+data = {"name": "Alice", "age": 30}
+
+# 测试列表中的成员检查
+print("Testing list membership:")
+print(3 in numbers)  # 应该输出 True
+print(6 in numbers)  # 应该输出 False
+
+# 测试字符串中的成员检查
+print("Testing string membership:")
+print("hello" in text)  # 应该输出 True
+print("xyz" in text)    # 应该输出 False
+
+# 测试字典中的键检查
+print("Testing dict membership:")
+print("name" in data)   # 应该输出 True
+print("city" in data)   # 应该输出 False

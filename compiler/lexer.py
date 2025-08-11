@@ -91,6 +91,39 @@ class TokenType(Enum):
     DEDENT = "DEDENT"
     EOF = "EOF"
     COMMENT = "COMMENT"
+    AT = "AT"               # @ (装饰器符号)
+    
+    # 新增高级特性
+    LAMBDA = "LAMBDA"       # lambda (匿名函数)
+    YIELD = "YIELD"         # yield (生成器)
+    ASYNC = "ASYNC"         # async (异步函数)
+    AWAIT = "AWAIT"         # await (等待异步)
+    WITH = "WITH"           # with (上下文管理器)
+    GLOBAL = "GLOBAL"       # global (全局变量)
+    NONLOCAL = "NONLOCAL"   # nonlocal (非局部变量)
+    ASSERT = "ASSERT"       # assert (断言)
+    DEL = "DEL"             # del (删除)
+    PASS = "PASS"           # pass (空语句)
+    
+    # 增强运算符
+    PLUS_ASSIGN = "PLUS_ASSIGN"         # +=
+    MINUS_ASSIGN = "MINUS_ASSIGN"       # -=
+    MULTIPLY_ASSIGN = "MULTIPLY_ASSIGN" # *=
+    DIVIDE_ASSIGN = "DIVIDE_ASSIGN"     # /=
+    MODULO_ASSIGN = "MODULO_ASSIGN"     # %=
+    POWER_ASSIGN = "POWER_ASSIGN"       # **=
+    
+    # 位运算符
+    BITWISE_AND = "BITWISE_AND"         # &
+    BITWISE_OR = "BITWISE_OR"           # |
+    BITWISE_XOR = "BITWISE_XOR"         # ^
+    BITWISE_NOT = "BITWISE_NOT"         # ~
+    LEFT_SHIFT = "LEFT_SHIFT"           # <<
+    RIGHT_SHIFT = "RIGHT_SHIFT"         # >>
+    
+    # 成员运算符
+    IS = "IS"               # is (身份比较)
+    IS_NOT = "IS_NOT"       # is not
 
 @dataclass
 class Token:
@@ -141,6 +174,18 @@ class Lexer:
             'finally': TokenType.FINALLY,
             'throw': TokenType.THROW,
             'as': TokenType.AS,
+            # 新增高级特性关键字
+            'lambda': TokenType.LAMBDA,
+            'yield': TokenType.YIELD,
+            'async': TokenType.ASYNC,
+            'await': TokenType.AWAIT,
+            'with': TokenType.WITH,
+            'global': TokenType.GLOBAL,
+            'nonlocal': TokenType.NONLOCAL,
+            'assert': TokenType.ASSERT,
+            'del': TokenType.DEL,
+            'pass': TokenType.PASS,
+            'is': TokenType.IS,
             # 类型关键字
             'int': TokenType.INT,
             'float': TokenType.FLOAT,
@@ -154,11 +199,11 @@ class Lexer:
             return None
         return self.source[self.position]
     
-    def peek_char(self, offset: int = 1) -> Optional[str]:
-        peek_pos = self.position + offset
-        if peek_pos >= len(self.source):
-            return None
-        return self.source[peek_pos]
+    def peek_char(self, offset=1):
+        """查看指定偏移位置的字符但不移动位置"""
+        if self.position + offset >= len(self.source):
+            return '\0'
+        return self.source[self.position + offset]
     
     def advance(self):
         if self.position < len(self.source) and self.source[self.position] == '\n':
@@ -374,11 +419,31 @@ class Lexer:
                 tokens.append(self.read_identifier())
                 continue
             
+            # 三字符运算符 (is not)
+            if char == 'i' and self.peek_char() == 's' and self.peek_char(2) == ' ':
+                # 检查是否是 "is not"
+                temp_pos = self.position + 3
+                while temp_pos < len(self.source) and self.source[temp_pos] == ' ':
+                    temp_pos += 1
+                if (temp_pos + 2 < len(self.source) and 
+                    self.source[temp_pos:temp_pos+3] == 'not' and
+                    (temp_pos + 3 >= len(self.source) or not self.source[temp_pos+3].isalnum())):
+                    tokens.append(Token(TokenType.IS_NOT, "is not", self.line, self.column))
+                    self.position = temp_pos + 3
+                    self.column += temp_pos + 3 - self.position
+                    continue
+            
             # 双字符运算符
             if char == '*' and self.peek_char() == '*':
-                tokens.append(Token(TokenType.POWER, "**", self.line, self.column))
-                self.advance()
-                self.advance()
+                if self.peek_char(2) == '=':
+                    tokens.append(Token(TokenType.POWER_ASSIGN, "**=", self.line, self.column))
+                    self.advance()
+                    self.advance()
+                    self.advance()
+                else:
+                    tokens.append(Token(TokenType.POWER, "**", self.line, self.column))
+                    self.advance()
+                    self.advance()
                 continue
             
             if char == '=' and self.peek_char() == '=':
@@ -399,8 +464,20 @@ class Lexer:
                 self.advance()
                 continue
             
+            if char == '<' and self.peek_char() == '<':
+                tokens.append(Token(TokenType.LEFT_SHIFT, "<<", self.line, self.column))
+                self.advance()
+                self.advance()
+                continue
+            
             if char == '>' and self.peek_char() == '=':
                 tokens.append(Token(TokenType.GREATER_EQUAL, ">=", self.line, self.column))
+                self.advance()
+                self.advance()
+                continue
+            
+            if char == '>' and self.peek_char() == '>':
+                tokens.append(Token(TokenType.RIGHT_SHIFT, ">>", self.line, self.column))
                 self.advance()
                 self.advance()
                 continue
@@ -408,6 +485,37 @@ class Lexer:
             # 检查箭头运算符 ->
             if char == '-' and self.peek_char() == '>':
                 tokens.append(Token(TokenType.ARROW, "->", self.line, self.column))
+                self.advance()
+                self.advance()
+                continue
+            
+            # 增强赋值运算符
+            if char == '+' and self.peek_char() == '=':
+                tokens.append(Token(TokenType.PLUS_ASSIGN, "+=", self.line, self.column))
+                self.advance()
+                self.advance()
+                continue
+            
+            if char == '-' and self.peek_char() == '=':
+                tokens.append(Token(TokenType.MINUS_ASSIGN, "-=", self.line, self.column))
+                self.advance()
+                self.advance()
+                continue
+            
+            if char == '*' and self.peek_char() == '=':
+                tokens.append(Token(TokenType.MULTIPLY_ASSIGN, "*=", self.line, self.column))
+                self.advance()
+                self.advance()
+                continue
+            
+            if char == '/' and self.peek_char() == '=':
+                tokens.append(Token(TokenType.DIVIDE_ASSIGN, "/=", self.line, self.column))
+                self.advance()
+                self.advance()
+                continue
+            
+            if char == '%' and self.peek_char() == '=':
+                tokens.append(Token(TokenType.MODULO_ASSIGN, "%=", self.line, self.column))
                 self.advance()
                 self.advance()
                 continue
@@ -431,6 +539,11 @@ class Lexer:
                 ',': TokenType.COMMA,
                 ':': TokenType.COLON,
                 '.': TokenType.DOT,
+                '&': TokenType.BITWISE_AND,
+                '|': TokenType.BITWISE_OR,
+                '^': TokenType.BITWISE_XOR,
+                '~': TokenType.BITWISE_NOT,
+                '@': TokenType.AT,
             }
             
             if char in single_char_tokens:

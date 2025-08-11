@@ -1,0 +1,326 @@
+# AquaScript 异步编程示例
+# 展示异步函数、协程、并发处理等高级特性
+
+# 导入异步相关模块
+import asyncio
+import asyncio.(Queue, Event, Semaphore)
+import aiohttp
+import time
+import typing.(List, Dict, Optional, Callable, AsyncGenerator)
+
+# 1. 基本异步函数
+async func simple_async_task(name: str, delay: float) -> str {
+    print(f"Task {name} started")
+    await asyncio.sleep(delay)
+    print(f"Task {name} completed after {delay} seconds")
+    return f"Result from {name}"
+}
+
+# 2. 异步HTTP请求
+async func fetch_url(session, url: str) -> dict {
+    try {
+        async with session.get(url) as response {
+            var data = await response.json()
+            return {
+                "url": url,
+                "status": response.status,
+                "data": data
+            }
+        }
+    } catch Exception as e {
+        return {
+            "url": url,
+            "error": str(e)
+        }
+    }
+}
+
+# 3. 并发处理多个URL
+async func fetch_multiple_urls(urls: list) -> list {
+    async with aiohttp.ClientSession() as session {
+        var tasks = []
+        for url in urls {
+            task = fetch_url(session, url)
+            tasks.append(task)
+        }
+        
+        var results = await asyncio.gather(*tasks)
+        return results
+    }
+}
+
+# 4. 异步生成器
+async func async_number_generator(start: int, end: int, delay: float) {
+    for i in range(start, end) {
+        await asyncio.sleep(delay)
+        yield i
+    }
+}
+
+async func async_fibonacci_generator(limit: int) {
+    var a, b = 0, 1
+    while a < limit {
+        yield a
+        await asyncio.sleep(0.1)  # 模拟异步操作
+        a, b = b, a + b
+    }
+}
+
+# 5. 异步上下文管理器
+class AsyncDatabaseConnection {
+    func __init__(self, connection_string: str) {
+        self.connection_string = connection_string
+        self.connection = None
+    }
+    
+    async func __aenter__(self) {
+        print(f"Connecting to database: {self.connection_string}")
+        await asyncio.sleep(0.5)  # 模拟连接延迟
+        self.connection = f"Connected to {self.connection_string}"
+        return self
+    }
+    
+    async func __aexit__(self, exc_type, exc_val, exc_tb) {
+        print("Closing database connection")
+        await asyncio.sleep(0.2)  # 模拟关闭延迟
+        self.connection = None
+    }
+    
+    async func query(self, sql: str) -> list {
+        if not self.connection {
+            raise RuntimeError("Database not connected")
+        }
+        
+        print(f"Executing query: {sql}")
+        await asyncio.sleep(0.3)  # 模拟查询延迟
+        
+        # 模拟查询结果
+        return [
+            {"id": 1, "name": "Alice", "age": 30},
+            {"id": 2, "name": "Bob", "age": 25},
+            {"id": 3, "name": "Charlie", "age": 35}
+        ]
+}
+
+# 6. 异步装饰器
+func async_timer(func) {
+    async func wrapper(*args, **kwargs) {
+        var start_time = time.time()
+        var result = await func(*args, **kwargs)
+        var end_time = time.time()
+        print(f"Function {func.__name__} took {end_time - start_time:.2f} seconds")
+        return result
+    }
+    return wrapper
+}
+
+func async_retry(max_attempts: int = 3, delay: float = 1.0) {
+    func decorator(func) {
+        async func wrapper(*args, **kwargs) {
+            for attempt in range(max_attempts) {
+                try {
+                    return await func(*args, **kwargs)
+                } catch Exception as e {
+                    if attempt == max_attempts - 1 {
+                        raise e
+                    }
+                    print(f"Attempt {attempt + 1} failed: {e}. Retrying in {delay} seconds...")
+                    await asyncio.sleep(delay)
+                }
+            }
+        }
+        return wrapper
+    }
+    return decorator
+}
+
+# 7. 使用装饰器的异步函数
+@async_timer
+@async_retry(max_attempts=3, delay=0.5)
+async func unreliable_api_call(success_rate: float = 0.7) -> dict {
+    import random
+    
+    await asyncio.sleep(0.5)  # 模拟网络延迟
+    
+    if random.random() < success_rate {
+        return {"status": "success", "data": "API response data"}
+    } else {
+        raise Exception("API call failed")
+    }
+}
+
+# 8. 异步队列处理
+async func producer(queue, items: list) {
+    for item in items {
+        await queue.put(item)
+        print(f"Produced: {item}")
+        await asyncio.sleep(0.1)
+    }
+    
+    # 发送结束信号
+    await queue.put(None)
+}
+
+async func consumer(queue, consumer_id: int) {
+    while True {
+        var item = await queue.get()
+        
+        if item is None {
+            # 结束信号
+            await queue.put(None)  # 传递给其他消费者
+            break
+        }
+        
+        print(f"Consumer {consumer_id} processing: {item}")
+        await asyncio.sleep(0.2)  # 模拟处理时间
+        queue.task_done()
+    }
+}
+
+# 9. 异步批处理
+async func process_batch(items: list, batch_size: int = 5) -> list {
+    var results = []
+    
+    for i in range(0, len(items), batch_size) {
+        var batch = items[i:i + batch_size]
+        var batch_tasks = []
+        
+        for item in batch {
+            task = process_single_item(item)
+            batch_tasks.append(task)
+        }
+        
+        var batch_results = await asyncio.gather(*batch_tasks)
+        results.extend(batch_results)
+        
+        print(f"Processed batch {i//batch_size + 1}")
+    }
+    
+    return results
+}
+
+async func process_single_item(item) -> dict {
+    # 模拟处理单个项目
+    await asyncio.sleep(0.1)
+    return {
+        "original": item,
+        "processed": item * 2 if isinstance(item, (int, float)) else f"processed_{item}",
+        "timestamp": time.time()
+    }
+}
+
+# 10. 主异步函数
+async func main() {
+    print("=== AquaScript 异步编程示例 ===\n")
+    
+    # 1. 基本异步任务
+    print("1. 基本异步任务:")
+    var task1 = simple_async_task("Task1", 1.0)
+    var task2 = simple_async_task("Task2", 0.5)
+    var task3 = simple_async_task("Task3", 1.5)
+    
+    var results = await asyncio.gather(task1, task2, task3)
+    print("Results:", results)
+    print()
+    
+    # 2. 异步生成器
+    print("2. 异步生成器:")
+    async for num in async_fibonacci_generator(50) {
+        print(num, end=" ")
+    }
+    print("\n")
+    
+    # 3. 异步上下文管理器
+    print("3. 异步数据库操作:")
+    async with AsyncDatabaseConnection("postgresql://localhost:5432/mydb") as db {
+        var users = await db.query("SELECT * FROM users")
+        for user in users {
+            print(f"User: {user['name']}, Age: {user['age']}")
+        }
+    }
+    print()
+    
+    # 4. 异步API调用
+    print("4. 异步API调用:")
+    try {
+        var api_result = await unreliable_api_call(0.8)
+        print("API Result:", api_result)
+    } catch Exception as e {
+        print("API Error:", e)
+    }
+    print()
+    
+    # 5. 异步队列处理
+    print("5. 异步队列处理:")
+    var queue = asyncio.Queue()
+    var items = ["item1", "item2", "item3", "item4", "item5"]
+    
+    var producer_task = producer(queue, items)
+    var consumer_tasks = [
+        consumer(queue, 1),
+        consumer(queue, 2)
+    ]
+    
+    await asyncio.gather(producer_task, *consumer_tasks)
+    print()
+    
+    # 6. 异步批处理
+    print("6. 异步批处理:")
+    var data = list(range(1, 21))  # 1到20的数字
+    var processed_data = await process_batch(data, batch_size=5)
+    
+    print("Processed items:")
+    for item in processed_data[:5] {  # 只显示前5个
+        print(f"  {item['original']} -> {item['processed']}")
+    }
+    print(f"... and {len(processed_data) - 5} more items")
+    print()
+    
+    # 7. 并发HTTP请求（模拟）
+    print("7. 并发HTTP请求:")
+    var urls = [
+        "https://api.example.com/users",
+        "https://api.example.com/posts",
+        "https://api.example.com/comments"
+    ]
+    
+    # 注意：这里只是示例，实际运行需要真实的URL
+    print("URLs to fetch:", urls)
+    print("(This is a demonstration - actual HTTP requests would be made in a real environment)")
+
+# 11. 异步错误处理示例
+async func error_prone_task(should_fail: bool = False) {
+    await asyncio.sleep(0.5)
+    
+    if should_fail {
+        raise ValueError("Task intentionally failed")
+    }
+    
+    return "Task completed successfully"
+}
+
+async func handle_async_errors() {
+    var tasks = [
+        error_prone_task(False),
+        error_prone_task(True),
+        error_prone_task(False)
+    ]
+    
+    var results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    for i, result in enumerate(results) {
+        if isinstance(result, Exception) {
+            print(f"Task {i+1} failed: {result}")
+        } else {
+            print(f"Task {i+1} succeeded: {result}")
+    }
+}
+
+# 运行异步主函数
+if __name__ == "__main__" {
+    # 在AquaScript中，这将启动异步事件循环
+    asyncio.run(main())
+    
+    print("\n=== 异步错误处理示例 ===")
+    asyncio.run(handle_async_errors())
+}

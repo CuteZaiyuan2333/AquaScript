@@ -1,0 +1,214 @@
+# AquaScript 高级特性示例
+
+# 1. 装饰器 (Decorators)
+@timer
+func fibonacci_decorated(n: int) -> int {
+    if n <= 1:
+        return n
+    return fibonacci_decorated(n-1) + fibonacci_decorated(n-2)
+}
+
+@cache
+@validate_input
+func expensive_calculation(x: int, y: int) -> int {
+    return x ** y + y ** x
+}
+
+# 2. Lambda 表达式
+var square = lambda x: x * x
+var add = lambda x, y: x + y
+var numbers = [1, 2, 3, 4, 5]
+var squared_numbers = map(square, numbers)
+
+# 3. 生成器函数 (Generator Functions)
+func fibonacci_generator(limit: int) {
+    var a = 0
+    var b = 1
+    while a < limit {
+        yield a
+        var temp = a
+        a = b
+        b = temp + b
+    }
+}
+
+func countdown(start: int) {
+    while start > 0 {
+        yield start
+        start -= 1
+    }
+    yield "Blast off!"
+}
+
+# 4. 异步函数 (Async Functions)
+async func fetch_data(url: str) -> dict {
+    var response = await http_get(url)
+    var data = await response.json()
+    return data
+}
+
+async func process_multiple_urls(urls: list) {
+    var tasks = []
+    for url in urls {
+        tasks.append(fetch_data(url))
+    }
+    var results = await gather(tasks)
+    return results
+}
+
+# 5. 上下文管理器 (Context Managers)
+with open("data.txt") as file {
+    var content = file.read()
+    print("File content:", content)
+}
+
+with database_connection("localhost") as db {
+    var users = db.query("SELECT * FROM users")
+    for user in users {
+        print("User:", user.name)
+    }
+}
+
+# 6. 高级赋值运算符
+var counter = 0
+counter += 5    # counter = 5
+counter *= 2    # counter = 10
+counter **= 2   # counter = 100
+counter //= 3   # counter = 33
+
+var flags = 0b1010
+flags |= 0b0101  # 按位或赋值
+flags &= 0b1111  # 按位与赋值
+flags ^= 0b0011  # 按位异或赋值
+
+# 7. 位运算符
+var a = 0b1100
+var b = 0b1010
+
+var and_result = a & b      # 按位与: 0b1000
+var or_result = a | b       # 按位或: 0b1110
+var xor_result = a ^ b      # 按位异或: 0b0110
+var not_result = ~a         # 按位非: 0b...0011
+var left_shift = a << 2     # 左移: 0b110000
+var right_shift = a >> 1    # 右移: 0b0110
+
+# 8. 全局和非局部变量
+var global_counter = 0
+
+func increment_global() {
+    global global_counter
+    global_counter += 1
+}
+
+func outer_function() {
+    var local_var = 10
+    
+    func inner_function() {
+        nonlocal local_var
+        local_var += 5
+        return local_var
+    }
+    
+    return inner_function
+}
+
+# 9. 断言 (Assertions)
+func divide(a: float, b: float) -> float {
+    assert b != 0, "Division by zero is not allowed"
+    assert isinstance(a, (int, float)), "First argument must be a number"
+    assert isinstance(b, (int, float)), "Second argument must be a number"
+    return a / b
+}
+
+# 10. 删除语句 (Del Statement)
+var temp_dict = {"a": 1, "b": 2, "c": 3}
+del temp_dict["b"]  # 删除字典中的键
+
+var temp_list = [1, 2, 3, 4, 5]
+del temp_list[2]    # 删除列表中的元素
+
+# 11. 成员运算符 (is/is not)
+var obj1 = [1, 2, 3]
+var obj2 = [1, 2, 3]
+var obj3 = obj1
+
+print(obj1 is obj3)      # True - 同一个对象
+print(obj1 is obj2)      # False - 不同对象
+print(obj1 is not obj2)  # True
+
+# 12. 高级列表推导式和生成器表达式
+var even_squares = [x*x for x in range(10) if x % 2 == 0]
+var word_lengths = {word: len(word) for word in ["hello", "world", "python"]}
+
+# 生成器表达式
+var even_generator = (x*x for x in range(10) if x % 2 == 0)
+
+# 13. 多重装饰器示例
+@log_calls
+@retry(max_attempts=3)
+@timeout(seconds=30)
+async func complex_operation(data: dict) -> str {
+    # 模拟复杂的异步操作
+    await asyncio.sleep(1)
+    
+    if not data:
+        raise ValueError("Data cannot be empty")
+    
+    var result = ""
+    for key, value in data.items() {
+        result += f"{key}: {value}\n"
+    }
+    
+    return result.strip()
+}
+
+# 14. 使用示例
+func main() {
+    # 测试装饰器函数
+    print("Fibonacci(10):", fibonacci_decorated(10))
+    
+    # 测试lambda表达式
+    print("Square of 5:", square(5))
+    print("Sum of 3 and 7:", add(3, 7))
+    
+    # 测试生成器
+    print("Fibonacci sequence:")
+    for num in fibonacci_generator(100) {
+        print(num, end=" ")
+    }
+    print()
+    
+    # 测试位运算
+    print(f"Bitwise AND: {and_result:b}")
+    print(f"Bitwise OR: {or_result:b}")
+    print(f"Bitwise XOR: {xor_result:b}")
+    
+    # 测试全局变量
+    increment_global()
+    increment_global()
+    print("Global counter:", global_counter)
+    
+    # 测试非局部变量
+    var closure = outer_function()
+    print("Closure result:", closure())
+    print("Closure result:", closure())
+    
+    # 测试断言
+    try {
+        var result = divide(10, 2)
+        print("Division result:", result)
+        
+        # 这会触发断言错误
+        divide(10, 0)
+    } catch AssertionError as e {
+        print("Assertion error:", e)
+    }
+    
+    # 测试对象身份
+    print("Object identity test passed")
+}
+
+# 运行主函数
+if __name__ == "__main__" {
+    main()
+}

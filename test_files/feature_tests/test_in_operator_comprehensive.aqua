@@ -1,0 +1,61 @@
+# 全面测试 in 操作符
+print("=== Comprehensive 'in' operator tests ===")
+
+# 基本数据类型测试
+numbers = [1, 2, 3, 4, 5]
+text = "hello world"
+data = {"name": "Alice", "age": 30, "city": "New York"}
+
+print("1. Basic membership tests:")
+print("3 in [1,2,3,4,5]:", 3 in numbers)
+print("6 in [1,2,3,4,5]:", 6 in numbers)
+print("'hello' in 'hello world':", "hello" in text)
+print("'xyz' in 'hello world':", "xyz" in text)
+print("'name' in dict:", "name" in data)
+print("'country' in dict:", "country" in data)
+
+# 在条件语句中使用
+print("\n2. Using 'in' in conditions:")
+if 3 in numbers:
+    print("Found 3 in numbers list")
+
+if "world" in text:
+    print("Found 'world' in text")
+
+if "age" in data:
+    print("Found 'age' key in data dict")
+
+# 复合表达式
+print("\n3. Complex expressions with 'in':")
+result1 = (1 in numbers) and (2 in numbers)
+print("(1 in numbers) and (2 in numbers):", result1)
+
+result2 = (10 in numbers) or (3 in numbers)
+print("(10 in numbers) or (3 in numbers):", result2)
+
+result3 = not (100 in numbers)
+print("not (100 in numbers):", result3)
+
+# 嵌套数据结构
+nested_list = [[1, 2], [3, 4], [5, 6]]
+nested_dict = {"users": ["Alice", "Bob"], "admins": ["Charlie"]}
+
+print("\n4. Nested structures:")
+print("[3, 4] in nested_list:", [3, 4] in nested_list)
+print("'users' in nested_dict:", "users" in nested_dict)
+
+# 函数中使用
+func contains_vowel(word: str) -> bool:
+    vowels = "aeiou"
+    for char in word:
+        if char in vowels:
+            return True
+    return False
+
+print("\n5. Using 'in' in functions:")
+result1 = contains_vowel("hello")
+result2 = contains_vowel("xyz")
+print("contains_vowel('hello'):", result1)
+print("contains_vowel('xyz'):", result2)
+
+print("\n=== All tests completed ===")

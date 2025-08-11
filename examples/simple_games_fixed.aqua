@@ -1,0 +1,215 @@
+# AquaScript示例程序：简单游戏集合
+
+# ============= 猜数字游戏 =============
+func number_guessing_game():
+    print("=== 猜数字游戏 ===")
+    print("我想了一个1到100之间的数字，你能猜到吗？")
+    
+    # 模拟随机数（简化版本）
+    var secret_number = 42  # 在实际实现中，这应该是随机生成的
+    var attempts = 0
+    var max_attempts = 7
+    var guessed = False
+    
+    # 模拟用户输入的猜测
+    var user_guesses = [50, 30, 40, 45, 42]  # 模拟用户的猜测序列
+    var guess_index = 0
+    
+    while attempts < max_attempts and not guessed and guess_index < len(user_guesses):
+        var guess = user_guesses[guess_index]
+        attempts = attempts + 1
+        guess_index = guess_index + 1
+        
+        print("第 " + str(attempts) + " 次猜测: " + str(guess))
+        
+        if guess == secret_number:
+            print("恭喜！你猜对了！")
+            print("你用了 " + str(attempts) + " 次猜测。")
+            guessed = True
+        else:
+            if guess < secret_number:
+                print("太小了！再试试更大的数字。")
+            else:
+                print("太大了！再试试更小的数字。")
+    
+    if not guessed:
+        print("游戏结束！正确答案是 " + str(secret_number))
+    
+    return guessed
+
+# ============= 井字棋游戏 =============
+func tic_tac_toe():
+    print("")
+    print("=== 井字棋游戏 ===")
+    
+    # 初始化棋盘
+    var board = [
+        [" ", " ", " "],
+        [" ", " ", " "],
+        [" ", " ", " "]
+    ]
+    
+    var current_player = "X"
+    var game_over = False
+    var moves = 0
+    
+    # 预设的游戏移动（模拟两个玩家的对战）
+    var game_moves = [
+        [0, 0], [1, 1], [0, 1], [2, 2], [0, 2]  # X获胜的序列
+    ]
+    
+    print_board(board)
+    
+    var move_index = 0
+    while not game_over and moves < 9 and move_index < len(game_moves):
+        var move = game_moves[move_index]
+        var row = move[0]
+        var col = move[1]
+        
+        if board[row][col] == " ":
+            board[row][col] = current_player
+            moves = moves + 1
+            move_index = move_index + 1
+            
+            print("玩家 " + current_player + " 在位置 (" + str(row) + ", " + str(col) + ") 下棋")
+            print_board(board)
+            
+            if check_winner(board, current_player):
+                print("玩家 " + current_player + " 获胜！")
+                game_over = True
+            else:
+                if current_player == "X":
+                    current_player = "O"
+                else:
+                    current_player = "X"
+        else:
+            move_index = move_index + 1
+    
+    if not game_over and moves == 9:
+        print("平局！")
+    
+    return True
+
+func print_board(board):
+    print("  0   1   2")
+    var i = 0
+    while i < 3:
+        var row_str = str(i) + " " + board[i][0] + " | " + board[i][1] + " | " + board[i][2]
+        print(row_str)
+        if i < 2:
+            print("  ---------")
+        i = i + 1
+    print("")
+
+func check_winner(board, player):
+    # 检查行
+    var i = 0
+    while i < 3:
+        if board[i][0] == player and board[i][1] == player and board[i][2] == player:
+            return True
+        i = i + 1
+    
+    # 检查列
+    i = 0
+    while i < 3:
+        if board[0][i] == player and board[1][i] == player and board[2][i] == player:
+            return True
+        i = i + 1
+    
+    # 检查对角线
+    if board[0][0] == player and board[1][1] == player and board[2][2] == player:
+        return True
+    if board[0][2] == player and board[1][1] == player and board[2][0] == player:
+        return True
+    
+    return False
+
+# ============= 石头剪刀布游戏 =============
+func rock_paper_scissors():
+    print("")
+    print("=== 石头剪刀布游戏 ===")
+    
+    var choices = ["石头", "剪刀", "布"]
+    var player_score = 0
+    var computer_score = 0
+    var rounds = 5
+    
+    # 模拟游戏轮次
+    var player_choices = [0, 2, 1, 0, 2]  # 玩家选择（索引）
+    var computer_choices = [1, 0, 2, 0, 1]  # 电脑选择（索引）
+    
+    var round = 0
+    while round < rounds:
+        var player_choice = player_choices[round]
+        var computer_choice = computer_choices[round]
+        
+        print("第 " + str(round + 1) + " 轮:")
+        print("你选择: " + choices[player_choice])
+        print("电脑选择: " + choices[computer_choice])
+        
+        var result = determine_winner(player_choice, computer_choice)
+        if result == 1:
+            print("你赢了这一轮！")
+            player_score = player_score + 1
+        else:
+            if result == -1:
+                print("电脑赢了这一轮！")
+                computer_score = computer_score + 1
+            else:
+                print("这一轮平局！")
+        
+        print("当前比分 - 你: " + str(player_score) + ", 电脑: " + str(computer_score))
+        print("")
+        
+        round = round + 1
+    
+    print("最终结果:")
+    if player_score > computer_score:
+        print("恭喜！你赢得了整场比赛！")
+    else:
+        if computer_score > player_score:
+            print("电脑赢得了比赛，再接再厉！")
+        else:
+            print("比赛平局！")
+    
+    return True
+
+func determine_winner(player, computer):
+    # 0: 石头, 1: 剪刀, 2: 布
+    # 返回值: 1 = 玩家赢, -1 = 电脑赢, 0 = 平局
+    
+    if player == computer:
+        return 0
+    
+    # 玩家获胜的情况
+    if player == 0 and computer == 1:
+        return 1
+    if player == 1 and computer == 2:
+        return 1
+    if player == 2 and computer == 0:
+        return 1
+    
+    # 其他情况电脑获胜
+    return -1
+
+func max(a, b):
+    if a > b:
+        return a
+    else:
+        return b
+
+# ============= 主程序 =============
+func main():
+    print("AquaScript 简单游戏集合")
+    print("==============================")
+    
+    # 运行各种游戏
+    number_guessing_game()
+    tic_tac_toe()
+    rock_paper_scissors()
+    
+    print("")
+    print("感谢游玩！")
+
+# 运行主程序
+main()

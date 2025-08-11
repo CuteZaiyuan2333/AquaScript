@@ -1,0 +1,191 @@
+# AquaScript示例程序：数据结构和算法
+
+# ============= 列表操作 =============
+func list_operations():
+    print("=== 列表操作示例 ===")
+    
+    # 创建和操作列表
+    var numbers = [1, 2, 3, 4, 5]
+    var fruits = ["apple", "banana", "orange"]
+    
+    print("原始数字列表: " + str(numbers))
+    print("水果列表: " + str(fruits))
+    
+    # 列表长度和索引访问
+    print("数字列表长度: " + str(len(numbers)))
+    print("第一个水果: " + fruits[0])
+    print("最后一个数字: " + str(numbers[len(numbers) - 1]))
+    
+    return True
+
+# ============= 字典操作 =============
+func dictionary_operations():
+    print("")
+    print("=== 字典操作示例 ===")
+    
+    # 创建学生信息字典
+    var student = {"name": "张三", "age": 20, "grade": "A", "subjects": ["数学", "物理", "化学"]}
+    
+    print("学生信息: " + str(student))
+    print("学生姓名: " + student["name"])
+    print("学生年龄: " + str(student["age"]))
+    print("学习科目: " + str(student["subjects"]))
+    
+    # 修改字典
+    student["age"] = 21
+    student["city"] = "北京"
+    print("更新后的学生信息: " + str(student))
+    
+    return True
+
+# ============= 排序算法 =============
+func bubble_sort(arr):
+    var n = len(arr)
+    var i = 0
+    
+    while i < n - 1:
+        var j = 0
+        while j < n - i - 1:
+            if arr[j] > arr[j + 1]:
+                # 交换元素
+                var temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
+            j = j + 1
+        i = i + 1
+    
+    return arr
+
+func selection_sort(arr):
+    var n = len(arr)
+    var i = 0
+    
+    while i < n:
+        var min_idx = i
+        var j = i + 1
+        
+        while j < n:
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+            j = j + 1
+        
+        # 交换最小元素到当前位置
+        var temp = arr[min_idx]
+        arr[min_idx] = arr[i]
+        arr[i] = temp
+        
+        i = i + 1
+    
+    return arr
+
+# ============= 搜索算法 =============
+func linear_search(arr, target):
+    var i = 0
+    while i < len(arr):
+        if arr[i] == target:
+            return i
+        i = i + 1
+    return -1
+
+func binary_search(arr, target):
+    var left = 0
+    var right = len(arr) - 1
+    
+    while left <= right:
+        var mid = int((left + right) / 2)
+        
+        if arr[mid] == target:
+            return mid
+        else:
+            if arr[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+    
+    return -1
+
+# ============= 数学工具函数 =============
+func factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+func gcd(a, b):
+    while b != 0:
+        var temp = b
+        b = a % b
+        a = temp
+    return a
+
+func is_prime(n):
+    if n <= 1:
+        return False
+    if n <= 3:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    
+    var i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i = i + 6
+    
+    return True
+
+# ============= 主程序 =============
+func main():
+    print("AquaScript 数据结构和算法示例")
+    print("==========================================")
+    
+    # 列表和字典操作
+    list_operations()
+    dictionary_operations()
+    
+    # 排序算法演示
+    print("")
+    print("=== 排序算法示例 ===")
+    var unsorted = [64, 34, 25, 12, 22, 11, 90]
+    print("原始数组: " + str(unsorted))
+    
+    var bubble_sorted = bubble_sort([64, 34, 25, 12, 22, 11, 90])
+    print("冒泡排序结果: " + str(bubble_sorted))
+    
+    var selection_sorted = selection_sort([64, 34, 25, 12, 22, 11, 90])
+    print("选择排序结果: " + str(selection_sorted))
+    
+    # 搜索算法演示
+    print("")
+    print("=== 搜索算法示例 ===")
+    var sorted_array = [11, 12, 22, 25, 34, 64, 90]
+    var target = 25
+    
+    var linear_result = linear_search(sorted_array, target)
+    var binary_result = binary_search(sorted_array, target)
+    
+    print("在数组 " + str(sorted_array) + " 中搜索 " + str(target))
+    print("线性搜索结果: 索引 " + str(linear_result))
+    print("二分搜索结果: 索引 " + str(binary_result))
+    
+    # 数学函数演示
+    print("")
+    print("=== 数学函数示例 ===")
+    var n = 5
+    print(str(n) + "! = " + str(factorial(n)))
+    print("gcd(48, 18) = " + str(gcd(48, 18)))
+    
+    var test_numbers = [17, 18, 19, 20, 21]
+    var i = 0
+    while i < len(test_numbers):
+        var num = test_numbers[i]
+        var prime_status = ""
+        if is_prime(num):
+            prime_status = "是质数"
+        else:
+            prime_status = "不是质数"
+        print(str(num) + " " + prime_status)
+        i = i + 1
+
+# 运行主程序
+main()

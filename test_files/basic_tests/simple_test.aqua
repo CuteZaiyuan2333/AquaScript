@@ -1,5 +1,5 @@
 
-// 简单性能测试
+# 简单性能测试
 func add(a: int, b: int) -> int:
     return a + b
 

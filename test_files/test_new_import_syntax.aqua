@@ -1,0 +1,75 @@
+# 测试新的导入语法
+# import module.(item1, item2, item3)
+
+print("=== 测试新的导入语法 ===")
+
+# 1. 传统的导入语法（应该继续工作）
+import math
+import os.path
+
+# 2. 新的导入语法（一次导入多个子模块）
+import typing.(TypeVar, Generic, Union, Optional, List, Dict)
+import collections.(defaultdict, Counter, deque)
+import asyncio.(Queue, Event, Semaphore, Lock)
+
+# 3. 混合使用
+import json
+import urllib.(parse, request, error)
+
+# 4. 测试使用导入的模块
+func test_imports():
+    print("测试数学模块:")
+    print("π = " + str(math.pi))
+    
+    print("\n测试类型注解:")
+    # 这里应该能够使用 TypeVar, Generic 等
+    print("TypeVar, Generic, Union 等已导入")
+    
+    print("\n测试集合模块:")
+    # 这里应该能够使用 defaultdict, Counter 等
+    print("defaultdict, Counter, deque 等已导入")
+    
+    print("\n测试异步模块:")
+    # 这里应该能够使用 Queue, Event 等
+    print("Queue, Event, Semaphore, Lock 等已导入")
+    
+    print("\n测试URL模块:")
+    # 这里应该能够使用 parse, request 等
+    print("parse, request, error 等已导入")
+
+# 5. 函数定义中使用类型注解
+func process_data(items: List, mapping: Dict) -> Optional:
+    if not items:
+        return None
+    
+    result = {}
+    for item in items:
+        if item in mapping:
+            result[item] = mapping[item]
+    
+    return result
+
+# 6. 泛型类定义
+class Container(Generic):
+    func __init__(self, value):
+        self.value = value
+    
+    func get_value(self):
+        return self.value
+
+# 主函数
+func main():
+    test_imports()
+    
+    # 测试类型注解函数
+    var data = ["a", "b", "c"]
+    var mapping = {"a": 1, "b": 2, "c": 3}
+    var result = process_data(data, mapping)
+    print("\n处理结果: " + str(result))
+    
+    # 测试泛型类
+    var container = Container("Hello AquaScript!")
+    print("容器值: " + container.get_value())
+
+if __name__ == "__main__":
+    main()

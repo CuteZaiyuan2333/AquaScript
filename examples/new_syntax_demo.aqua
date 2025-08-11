@@ -3,7 +3,7 @@
 
 # 导入Python模块
 import math
-from random import randint, choice
+import random.(randint, choice)
 
 # 变量声明（带类型）
 var name: str = "AquaScript"
@@ -78,7 +78,7 @@ func main():
     var area: float = calculate_area(5.0)
     print("Circle area: " + str(area))
     
-    var random_num: int = randint(1, 10)
+    var random_num: int = random.randint(1, 10)
     print("Random number: " + str(random_num))
     
     # 测试类

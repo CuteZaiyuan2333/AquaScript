@@ -247,9 +247,10 @@ class CodeGenerator:
                 '<': OpCode.LT,
                 '>': OpCode.GT,
                 '<=': OpCode.LE,
-                '>=': OpCode.GE,
-                'and': OpCode.AND,
-                'or': OpCode.OR,
+                    '>=': OpCode.GE,
+                    'in': OpCode.IN,
+                    'and': OpCode.AND,
+                    'or': OpCode.OR,
             }
             
             if expr.operator in op_map:

@@ -1,0 +1,14 @@
+# 简单测试新的导入语法
+
+print("测试开始")
+
+# 测试新的批量导入语法
+import typing.(TypeVar, Generic, Union)
+
+print("导入成功")
+
+func test_func():
+    print("测试函数")
+
+test_func()
+print("测试结束")

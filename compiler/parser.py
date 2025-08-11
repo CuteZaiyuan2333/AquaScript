@@ -201,6 +201,74 @@ class CatchClause(ASTNode):
 class ThrowStatement(Statement):
     exception: Expression
 
+# 新增高级特性的AST节点
+@dataclass
+class LambdaExpression(Expression):
+    parameters: List[str]
+    body: Expression
+
+@dataclass
+class YieldExpression(Expression):
+    value: Optional[Expression] = None
+
+@dataclass
+class AwaitExpression(Expression):
+    expression: Expression
+
+@dataclass
+class WithStatement(Statement):
+    context_expr: Expression
+    optional_vars: Optional[str]
+    body: List[Statement]
+
+@dataclass
+class AsyncFunctionDef(Statement):
+    name: str
+    parameters: List[str]
+    body: List[Statement]
+
+@dataclass
+class GlobalStatement(Statement):
+    names: List[str]
+
+@dataclass
+class NonlocalStatement(Statement):
+    names: List[str]
+
+@dataclass
+class AssertStatement(Statement):
+    test: Expression
+    msg: Optional[Expression] = None
+
+@dataclass
+class DelStatement(Statement):
+    targets: List[Expression]
+
+@dataclass
+class PassStatement(Statement):
+    pass
+
+@dataclass
+class Decorator(ASTNode):
+    name: str
+    args: List[Expression]
+
+@dataclass
+class DecoratedFunction(Statement):
+    decorators: List[Decorator]
+    function: FunctionDef
+
+@dataclass
+class GeneratorExpression(Expression):
+    element: Expression
+    generators: List['Comprehension']
+
+@dataclass
+class Comprehension(ASTNode):
+    target: str
+    iter: Expression
+    ifs: List[Expression]
+
 @dataclass
 class Program(ASTNode):
     statements: List[Statement]
@@ -296,7 +364,12 @@ class Parser:
     
     def parse_statement(self) -> Optional[Statement]:
         """解析语句"""
-        if self.match(TokenType.FUNC):
+        # 检查装饰器
+        if self.match(TokenType.AT):
+            return self.parse_decorated_function()
+        elif self.match(TokenType.ASYNC):
+            return self.parse_async_function_def()
+        elif self.match(TokenType.FUNC):
             return self.parse_function_def()
         elif self.match(TokenType.VAR):
             return self.parse_var_declaration()
@@ -312,6 +385,8 @@ class Parser:
             return self.parse_repeat_loop()
         elif self.match(TokenType.SWITCH):
             return self.parse_switch_statement()
+        elif self.match(TokenType.WITH):
+            return self.parse_with_statement()
         elif self.match(TokenType.IMPORT, TokenType.FROM):
             return self.parse_import_statement()
         elif self.match(TokenType.RETURN):
@@ -322,6 +397,17 @@ class Parser:
         elif self.match(TokenType.CONTINUE):
             self.advance()
             return ContinueStatement()
+        elif self.match(TokenType.GLOBAL):
+            return self.parse_global_statement()
+        elif self.match(TokenType.NONLOCAL):
+            return self.parse_nonlocal_statement()
+        elif self.match(TokenType.ASSERT):
+            return self.parse_assert_statement()
+        elif self.match(TokenType.DEL):
+            return self.parse_del_statement()
+        elif self.match(TokenType.PASS):
+            self.advance()
+            return PassStatement()
         elif self.match(TokenType.TRY):
             return self.parse_try_statement()
         elif self.match(TokenType.THROW):
@@ -578,7 +664,23 @@ class Parser:
             # 支持 import module.submodule 形式
             while self.match(TokenType.DOT):
                 self.advance()
-                module += "." + self.consume(TokenType.IDENTIFIER).value
+                
+                # 检查是否是新语法: import module.(item1, item2, ...)
+                if self.match(TokenType.LPAREN):
+                    self.advance()  # 消费 (
+                    
+                    items = []
+                    items.append(self.consume(TokenType.IDENTIFIER).value)
+                    
+                    while self.match(TokenType.COMMA):
+                        self.advance()
+                        items.append(self.consume(TokenType.IDENTIFIER).value)
+                    
+                    self.consume(TokenType.RPAREN)  # 消费 )
+                    return ImportStatement(module, items)
+                else:
+                    # 普通的 module.submodule 形式
+                    module += "." + self.consume(TokenType.IDENTIFIER).value
             
             return ImportStatement(module)
     
@@ -817,7 +919,7 @@ class Parser:
         """解析比较表达式"""
         expr = self.parse_additive_expression()
         
-        while self.match(TokenType.LESS, TokenType.GREATER, TokenType.LESS_EQUAL, TokenType.GREATER_EQUAL):
+        while self.match(TokenType.LESS, TokenType.GREATER, TokenType.LESS_EQUAL, TokenType.GREATER_EQUAL, TokenType.IN):
             operator = self.current_token.value
             self.advance()
             right = self.parse_additive_expression()
@@ -910,6 +1012,18 @@ class Parser:
     
     def parse_primary_expression(self) -> Expression:
         """解析基本表达式"""
+        # Lambda表达式
+        if self.match(TokenType.LAMBDA):
+            return self.parse_lambda_expression()
+        
+        # Yield表达式
+        if self.match(TokenType.YIELD):
+            return self.parse_yield_expression()
+        
+        # Await表达式
+        if self.match(TokenType.AWAIT):
+            return self.parse_await_expression()
+        
         if self.match(TokenType.NUMBER):
             value_str = self.current_token.value
             # 如果包含小数点，解析为浮点数，否则解析为整数
@@ -1121,6 +1235,187 @@ class Parser:
         self.consume(TokenType.THROW)
         exception = self.parse_expression()
         return ThrowStatement(exception)
+    
+    def parse_decorated_function(self) -> DecoratedFunction:
+        """解析装饰器函数"""
+        decorators = []
+        
+        # 解析所有装饰器
+        while self.match(TokenType.AT):
+            self.advance()  # 消费 @
+            decorator_name = self.consume(TokenType.IDENTIFIER).value
+            
+            # 检查是否有参数
+            args = []
+            if self.match(TokenType.LPAREN):
+                self.advance()
+                if not self.match(TokenType.RPAREN):
+                    args.append(self.parse_expression())
+                    while self.match(TokenType.COMMA):
+                        self.advance()
+                        args.append(self.parse_expression())
+                self.consume(TokenType.RPAREN)
+            
+            decorators.append(Decorator(decorator_name, args))
+            self.skip_newlines()
+        
+        # 解析被装饰的函数
+        function = self.parse_function_def()
+        return DecoratedFunction(decorators, function)
+    
+    def parse_async_function_def(self) -> AsyncFunctionDef:
+        """解析异步函数定义"""
+        self.consume(TokenType.ASYNC)
+        self.consume(TokenType.FUNC)
+        name = self.consume(TokenType.IDENTIFIER).value
+        
+        self.consume(TokenType.LPAREN)
+        parameters = []
+        
+        if not self.match(TokenType.RPAREN):
+            parameters.append(self.consume(TokenType.IDENTIFIER).value)
+            while self.match(TokenType.COMMA):
+                self.advance()
+                parameters.append(self.consume(TokenType.IDENTIFIER).value)
+        
+        self.consume(TokenType.RPAREN)
+        
+        # 支持两种语法
+        if self.match(TokenType.LBRACE):
+            body = self.parse_block()
+        else:
+            self.consume(TokenType.COLON)
+            self.skip_newlines()
+            self.consume(TokenType.INDENT)
+            body = []
+            
+            while not self.match(TokenType.DEDENT, TokenType.EOF):
+                if self.match(TokenType.NEWLINE, TokenType.COMMENT):
+                    self.advance()
+                    continue
+                stmt = self.parse_statement()
+                if stmt:
+                    body.append(stmt)
+                self.skip_newlines()
+            
+            if self.match(TokenType.DEDENT):
+                self.advance()
+        
+        return AsyncFunctionDef(name, parameters, body)
+    
+    def parse_with_statement(self) -> WithStatement:
+        """解析with语句"""
+        self.consume(TokenType.WITH)
+        context_expr = self.parse_expression()
+        
+        optional_vars = None
+        if self.match(TokenType.AS):
+            self.advance()
+            optional_vars = self.consume(TokenType.IDENTIFIER).value
+        
+        # 支持两种语法
+        if self.match(TokenType.LBRACE):
+            body = self.parse_block()
+        else:
+            self.consume(TokenType.COLON)
+            self.skip_newlines()
+            self.consume(TokenType.INDENT)
+            body = []
+            
+            while not self.match(TokenType.DEDENT, TokenType.EOF):
+                if self.match(TokenType.NEWLINE, TokenType.COMMENT):
+                    self.advance()
+                    continue
+                stmt = self.parse_statement()
+                if stmt:
+                    body.append(stmt)
+                self.skip_newlines()
+            
+            if self.match(TokenType.DEDENT):
+                self.advance()
+        
+        return WithStatement(context_expr, optional_vars, body)
+    
+    def parse_global_statement(self) -> GlobalStatement:
+        """解析global语句"""
+        self.consume(TokenType.GLOBAL)
+        names = [self.consume(TokenType.IDENTIFIER).value]
+        
+        while self.match(TokenType.COMMA):
+            self.advance()
+            names.append(self.consume(TokenType.IDENTIFIER).value)
+        
+        return GlobalStatement(names)
+    
+    def parse_nonlocal_statement(self) -> NonlocalStatement:
+        """解析nonlocal语句"""
+        self.consume(TokenType.NONLOCAL)
+        names = [self.consume(TokenType.IDENTIFIER).value]
+        
+        while self.match(TokenType.COMMA):
+            self.advance()
+            names.append(self.consume(TokenType.IDENTIFIER).value)
+        
+        return NonlocalStatement(names)
+    
+    def parse_assert_statement(self) -> AssertStatement:
+        """解析assert语句"""
+        self.consume(TokenType.ASSERT)
+        test = self.parse_expression()
+        
+        msg = None
+        if self.match(TokenType.COMMA):
+            self.advance()
+            msg = self.parse_expression()
+        
+        return AssertStatement(test, msg)
+    
+    def parse_del_statement(self) -> DelStatement:
+        """解析del语句"""
+        self.consume(TokenType.DEL)
+        targets = [self.parse_expression()]
+        
+        while self.match(TokenType.COMMA):
+            self.advance()
+            targets.append(self.parse_expression())
+        
+        return DelStatement(targets)
+    
+    def parse_lambda_expression(self) -> LambdaExpression:
+        """解析lambda表达式"""
+        self.consume(TokenType.LAMBDA)
+        
+        # 解析参数列表
+        parameters = []
+        if not self.match(TokenType.COLON):
+            parameters.append(self.consume(TokenType.IDENTIFIER).value)
+            while self.match(TokenType.COMMA):
+                self.advance()
+                parameters.append(self.consume(TokenType.IDENTIFIER).value)
+        
+        self.consume(TokenType.COLON)
+        
+        # 解析lambda体（单个表达式）
+        body = self.parse_expression()
+        
+        return LambdaExpression(parameters, body)
+    
+    def parse_yield_expression(self) -> YieldExpression:
+        """解析yield表达式"""
+        self.consume(TokenType.YIELD)
+        
+        # yield可以没有值
+        value = None
+        if not self.match(TokenType.NEWLINE, TokenType.SEMICOLON, TokenType.RBRACE, TokenType.RPAREN, TokenType.RBRACKET, TokenType.COMMA):
+            value = self.parse_expression()
+        
+        return YieldExpression(value)
+    
+    def parse_await_expression(self) -> AwaitExpression:
+        """解析await表达式"""
+        self.consume(TokenType.AWAIT)
+        expression = self.parse_expression()
+        return AwaitExpression(expression)
 
 def main():
     # 测试语法分析器

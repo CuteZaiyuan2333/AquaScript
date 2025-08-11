@@ -38,6 +38,7 @@ class OpCode(Enum):
     GT = 0x23              # 大于
     LE = 0x24              # 小于等于
     GE = 0x25              # 大于等于
+    IN = 0x26              # 包含检查
     
     # 逻辑运算
     AND = 0x30             # 逻辑与
@@ -367,6 +368,14 @@ class AquaVM:
             a = self.stack.pop()
             self.stack.append(a >= b)
         
+        elif opcode == OpCode.IN:
+            b = self.stack.pop()  # 容器
+            a = self.stack.pop()  # 要查找的元素
+            try:
+                self.stack.append(a in b)
+            except TypeError as e:
+                raise RuntimeError(f"Cannot check if {type(a).__name__} is in {type(b).__name__}: {e}")
+        
         elif opcode == OpCode.AND:
             b = self.stack.pop()
             a = self.stack.pop()
@@ -631,6 +640,36 @@ class AquaVM:
             self.stack.append(c)
             self.stack.append(a)
             self.stack.append(b)
+        
+        elif opcode == OpCode.IMPORT_MODULE:
+            # 导入模块
+            if not self.stack:
+                raise RuntimeError("IMPORT_MODULE requires 1 operand")
+            module_name = self.stack.pop()
+            try:
+                import importlib
+                module = importlib.import_module(module_name)
+                self.stack.append(module)
+            except ImportError as e:
+                raise RuntimeError(f"Cannot import module '{module_name}': {e}")
+        
+        elif opcode == OpCode.IMPORT_FROM:
+            # 从模块导入指定项
+            if len(self.stack) < 2:
+                raise RuntimeError("IMPORT_FROM requires 2 operands")
+            items = self.stack.pop()  # 要导入的项列表
+            module_name = self.stack.pop()  # 模块名
+            try:
+                import importlib
+                module = importlib.import_module(module_name)
+                # 按照导入顺序将每个项推入栈中（逆序推入，因为后续会逆序弹出）
+                for item in reversed(items):
+                    if hasattr(module, item):
+                        self.stack.append(getattr(module, item))
+                    else:
+                        raise AttributeError(f"module '{module_name}' has no attribute '{item}'")
+            except (ImportError, AttributeError) as e:
+                raise RuntimeError(f"Cannot import from module '{module_name}': {e}")
         
         else:
             raise ValueError(f"Unknown opcode: {opcode}")

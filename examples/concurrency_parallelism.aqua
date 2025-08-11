@@ -1,0 +1,560 @@
+# AquaScript 并发和并行编程示例
+# 展示线程、进程、异步编程等并发特性
+
+# 导入并发相关模块
+import threading
+import multiprocessing
+import asyncio
+import time
+import queue
+import concurrent.futures.(ThreadPoolExecutor, ProcessPoolExecutor)
+import typing.(List, Dict, Callable, Optional)
+import random
+
+# 1. 基本线程编程
+class ThreadExample {
+    """线程编程示例"""
+    
+    func __init__(self) {
+        self.counter = 0
+        self.lock = threading.Lock()
+    }
+    
+    func worker_thread(self, thread_id: int, iterations: int) {
+        """工作线程函数"""
+        for i in range(iterations) {
+            with self.lock {
+                var old_value = self.counter
+                time.sleep(0.001)  # 模拟一些工作
+                self.counter = old_value + 1
+                print(f"Thread {thread_id}: iteration {i+1}, counter = {self.counter}")
+            }
+    }
+    
+    func run_threads(self, num_threads: int = 3, iterations: int = 5) {
+        """运行多个线程"""
+        print(f"=== 运行 {num_threads} 个线程，每个执行 {iterations} 次迭代 ===")
+        
+        var threads = []
+        for i in range(num_threads) {
+            var thread = threading.Thread(
+                target=self.worker_thread,
+                args=(i+1, iterations)
+            )
+            threads.append(thread)
+            thread.start()
+        }
+        
+        # 等待所有线程完成
+        for thread in threads {
+            thread.join()
+        }
+        
+        print(f"最终计数器值: {self.counter}")
+        print()
+    }
+}
+
+# 2. 生产者-消费者模式
+class ProducerConsumer {
+    """生产者-消费者模式示例"""
+    
+    func __init__(self, buffer_size: int = 5) {
+        self.buffer = queue.Queue(maxsize=buffer_size)
+        self.running = True
+    }
+    
+    func producer(self, producer_id: int, num_items: int) {
+        """生产者函数"""
+        for i in range(num_items) {
+            if not self.running {
+                break
+            }
+            
+            var item = f"Item-{producer_id}-{i+1}"
+            self.buffer.put(item)
+            print(f"Producer {producer_id} produced: {item}")
+            time.sleep(random.uniform(0.1, 0.5))
+        }
+        print(f"Producer {producer_id} finished")
+    }
+    
+    func consumer(self, consumer_id: int) {
+        """消费者函数"""
+        while self.running {
+            try {
+                var item = self.buffer.get(timeout=1.0)
+                print(f"Consumer {consumer_id} consumed: {item}")
+                time.sleep(random.uniform(0.2, 0.8))
+                self.buffer.task_done()
+            } catch queue.Empty {
+                continue
+            }
+        }
+        print(f"Consumer {consumer_id} finished")
+    }
+    
+    func run_simulation(self, num_producers: int = 2, num_consumers: int = 2, items_per_producer: int = 5) {
+        """运行生产者-消费者模拟"""
+        print(f"=== 生产者-消费者模拟: {num_producers} 生产者, {num_consumers} 消费者 ===")
+        
+        var threads = []
+        
+        # 启动生产者线程
+        for i in range(num_producers) {
+            var thread = threading.Thread(
+                target=self.producer,
+                args=(i+1, items_per_producer)
+            )
+            threads.append(thread)
+            thread.start()
+        }
+        
+        # 启动消费者线程
+        for i in range(num_consumers) {
+            var thread = threading.Thread(
+                target=self.consumer,
+                args=(i+1,)
+            )
+            threads.append(thread)
+            thread.start()
+        }
+        
+        # 等待所有生产者完成
+        for i in range(num_producers) {
+            threads[i].join()
+        }
+        
+        # 等待队列清空
+        self.buffer.join()
+        
+        # 停止消费者
+        self.running = False
+        
+        # 等待所有消费者完成
+        for i in range(num_producers, len(threads)) {
+            threads[i].join()
+        }
+        
+        print("生产者-消费者模拟完成")
+        print()
+    }
+}
+
+# 3. 异步编程
+class AsyncExample {
+    """异步编程示例"""
+    
+    async func async_task(self, task_id: int, duration: float) -> str {
+        """异步任务"""
+        print(f"Task {task_id} started (duration: {duration}s)")
+        await asyncio.sleep(duration)
+        var result = f"Task {task_id} completed"
+        print(result)
+        return result
+    }
+    
+    async func async_http_request(self, url: str, delay: float = 1.0) -> Dict[str, Any] {
+        """模拟异步HTTP请求"""
+        print(f"Requesting {url}...")
+        await asyncio.sleep(delay)  # 模拟网络延迟
+        
+        return {
+            "url": url,
+            "status": 200,
+            "data": f"Response from {url}",
+            "timestamp": time.time()
+        }
+    }
+    
+    async func run_concurrent_tasks(self) {
+        """运行并发任务"""
+        print("=== 异步并发任务 ===")
+        
+        # 创建多个任务
+        var tasks = [
+            self.async_task(1, 2.0),
+            self.async_task(2, 1.5),
+            self.async_task(3, 1.0),
+            self.async_task(4, 2.5)
+        ]
+        
+        # 并发执行所有任务
+        var start_time = time.time()
+        var results = await asyncio.gather(*tasks)
+        var end_time = time.time()
+        
+        print(f"所有任务完成，总耗时: {end_time - start_time:.2f}s")
+        print("结果:", results)
+        print()
+    }
+    
+    async func run_http_requests(self) {
+        """运行并发HTTP请求"""
+        print("=== 异步HTTP请求 ===")
+        
+        var urls = [
+            "https://api.example.com/users",
+            "https://api.example.com/posts",
+            "https://api.example.com/comments",
+            "https://api.example.com/albums"
+        ]
+        
+        var start_time = time.time()
+        var tasks = [self.async_http_request(url, random.uniform(0.5, 2.0)) for url in urls]
+        var responses = await asyncio.gather(*tasks)
+        var end_time = time.time()
+        
+        print(f"所有请求完成，总耗时: {end_time - start_time:.2f}s")
+        for response in responses {
+            print(f"  {response['url']}: {response['status']} - {response['data']}")
+        }
+        print()
+    }
+    
+    async func async_generator_example(self) {
+        """异步生成器示例"""
+        print("=== 异步生成器 ===")
+        
+        async func async_number_generator(start: int, end: int, delay: float = 0.5) {
+            for i in range(start, end + 1) {
+                await asyncio.sleep(delay)
+                yield i
+            }
+        }
+        
+        async for number in async_number_generator(1, 5, 0.3) {
+            print(f"Generated number: {number}")
+        }
+        print()
+    }
+}
+
+# 4. 进程池和线程池
+class PoolExample {
+    """进程池和线程池示例"""
+    
+    @staticmethod
+    func cpu_intensive_task(n: int) -> int {
+        """CPU密集型任务"""
+        var result = 0
+        for i in range(n * 1000000) {
+            result += i % 7
+        }
+        return result
+    }
+    
+    @staticmethod
+    func io_intensive_task(duration: float) -> str {
+        """IO密集型任务"""
+        time.sleep(duration)
+        return f"IO task completed in {duration}s"
+    }
+    
+    func run_thread_pool_example(self) {
+        """线程池示例"""
+        print("=== 线程池示例 (IO密集型任务) ===")
+        
+        var tasks = [0.5, 1.0, 0.8, 1.2, 0.3]
+        
+        var start_time = time.time()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor {
+            var futures = [executor.submit(self.io_intensive_task, duration) for duration in tasks]
+            var results = [future.result() for future in concurrent.futures.as_completed(futures)]
+        }
+        var end_time = time.time()
+        
+        print(f"线程池执行完成，总耗时: {end_time - start_time:.2f}s")
+        for result in results {
+            print(f"  {result}")
+        }
+        print()
+    }
+    
+    func run_process_pool_example(self) {
+        """进程池示例"""
+        print("=== 进程池示例 (CPU密集型任务) ===")
+        
+        var tasks = [10, 15, 12, 18, 8]
+        
+        var start_time = time.time()
+        with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor {
+            var futures = [executor.submit(self.cpu_intensive_task, n) for n in tasks]
+            var results = [future.result() for future in concurrent.futures.as_completed(futures)]
+        }
+        var end_time = time.time()
+        
+        print(f"进程池执行完成，总耗时: {end_time - start_time:.2f}s")
+        for i, result in enumerate(results) {
+            print(f"  Task result: {result}")
+        }
+        print()
+    }
+}
+
+# 5. 高级并发模式
+class AdvancedConcurrency {
+    """高级并发模式"""
+    
+    func __init__(self) {
+        self.semaphore = threading.Semaphore(2)  # 最多2个并发访问
+        self.condition = threading.Condition()
+        self.shared_resource = []
+    }
+    
+    func semaphore_example(self, worker_id: int) {
+        """信号量示例"""
+        print(f"Worker {worker_id} waiting for semaphore...")
+        with self.semaphore {
+            print(f"Worker {worker_id} acquired semaphore")
+            time.sleep(random.uniform(1, 3))
+            print(f"Worker {worker_id} releasing semaphore")
+        }
+    }
+    
+    func condition_producer(self, items: List[str]) {
+        """条件变量生产者"""
+        with self.condition {
+            for item in items {
+                self.shared_resource.append(item)
+                print(f"Produced: {item}")
+                self.condition.notify_all()
+                time.sleep(0.5)
+        }
+    }
+    
+    func condition_consumer(self, consumer_id: int, target_count: int) {
+        """条件变量消费者"""
+        var consumed = 0
+        while consumed < target_count {
+            with self.condition {
+                while len(self.shared_resource) == 0 {
+                    print(f"Consumer {consumer_id} waiting...")
+                    self.condition.wait()
+                }
+                
+                if self.shared_resource {
+                    var item = self.shared_resource.pop(0)
+                    consumed += 1
+                    print(f"Consumer {consumer_id} consumed: {item}")
+                }
+            }
+            time.sleep(0.3)
+    }
+    
+    func run_semaphore_example(self) {
+        """运行信号量示例"""
+        print("=== 信号量示例 ===")
+        
+        var threads = []
+        for i in range(5) {
+            var thread = threading.Thread(target=self.semaphore_example, args=(i+1,))
+            threads.append(thread)
+            thread.start()
+        }
+        
+        for thread in threads {
+            thread.join()
+        }
+        print()
+    }
+    
+    func run_condition_example(self) {
+        """运行条件变量示例"""
+        print("=== 条件变量示例 ===")
+        
+        var items = [f"item-{i}" for i in range(1, 11)]
+        
+        # 启动消费者
+        var consumer1 = threading.Thread(target=self.condition_consumer, args=(1, 4))
+        var consumer2 = threading.Thread(target=self.condition_consumer, args=(2, 6))
+        
+        consumer1.start()
+        consumer2.start()
+        
+        # 启动生产者
+        var producer = threading.Thread(target=self.condition_producer, args=(items,))
+        producer.start()
+        
+        # 等待完成
+        producer.join()
+        consumer1.join()
+        consumer2.join()
+        print()
+    }
+}
+
+# 6. 异步上下文管理器
+class AsyncContextManager {
+    """异步上下文管理器示例"""
+    
+    func __init__(self, name: str) {
+        self.name = name
+    }
+    
+    async func __aenter__(self) {
+        print(f"Entering async context: {self.name}")
+        await asyncio.sleep(0.1)  # 模拟异步初始化
+        return self
+    }
+    
+    async func __aexit__(self, exc_type, exc_val, exc_tb) {
+        print(f"Exiting async context: {self.name}")
+        await asyncio.sleep(0.1)  # 模拟异步清理
+        return False
+    }
+    
+    async func do_work(self) {
+        print(f"Doing work in {self.name}")
+        await asyncio.sleep(0.5)
+        return f"Work completed in {self.name}"
+    }
+}
+
+async func async_context_example() {
+    """异步上下文管理器使用示例"""
+    print("=== 异步上下文管理器 ===")
+    
+    async with AsyncContextManager("Database Connection") as db {
+        var result1 = await db.do_work()
+        print(result1)
+    }
+    
+    async with AsyncContextManager("File Handler") as file_handler {
+        var result2 = await file_handler.do_work()
+        print(result2)
+    }
+    print()
+}
+
+# 7. 协程和任务管理
+class TaskManager {
+    """任务管理器"""
+    
+    func __init__(self) {
+        self.tasks = []
+        self.results = {}
+    }
+    
+    async func create_task(self, task_id: str, coro: Callable) -> Any {
+        """创建并管理任务"""
+        print(f"Creating task: {task_id}")
+        var task = asyncio.create_task(coro)
+        self.tasks.append((task_id, task))
+        
+        try {
+            var result = await task
+            self.results[task_id] = {"status": "completed", "result": result}
+            print(f"Task {task_id} completed successfully")
+            return result
+        } catch Exception as e {
+            self.results[task_id] = {"status": "failed", "error": str(e)}
+            print(f"Task {task_id} failed: {e}")
+            raise
+        }
+    }
+    
+    async func wait_for_all(self) {
+        """等待所有任务完成"""
+        if not self.tasks {
+            return
+        }
+        
+        var pending_tasks = [task for _, task in self.tasks]
+        await asyncio.gather(*pending_tasks, return_exceptions=True)
+    }
+    
+    func get_results(self) -> Dict[str, Any] {
+        """获取所有任务结果"""
+        return self.results.copy()
+    }
+}
+
+async func task_management_example() {
+    """任务管理示例"""
+    print("=== 任务管理示例 ===")
+    
+    var manager = TaskManager()
+    
+    # 定义一些异步任务
+    async func long_running_task(duration: float) -> str {
+        await asyncio.sleep(duration)
+        return f"Long task completed in {duration}s"
+    }
+    
+    async func failing_task() -> str {
+        await asyncio.sleep(1)
+        raise ValueError("This task always fails")
+    }
+    
+    async func quick_task() -> str {
+        await asyncio.sleep(0.5)
+        return "Quick task completed"
+    }
+    
+    # 创建任务
+    var tasks = [
+        manager.create_task("task1", long_running_task(2.0)),
+        manager.create_task("task2", quick_task()),
+        manager.create_task("task3", failing_task()),
+        manager.create_task("task4", long_running_task(1.5))
+    ]
+    
+    # 等待所有任务完成
+    await asyncio.gather(*tasks, return_exceptions=True)
+    
+    # 显示结果
+    var results = manager.get_results()
+    for task_id, result in results.items() {
+        print(f"  {task_id}: {result}")
+    }
+    print()
+}
+
+# 8. 主函数
+async func async_main() {
+    """异步主函数"""
+    print("=== AquaScript 并发和并行编程示例 ===\n")
+    
+    # 1. 线程示例
+    var thread_example = ThreadExample()
+    thread_example.run_threads(3, 3)
+    
+    # 2. 生产者-消费者示例
+    var pc_example = ProducerConsumer()
+    pc_example.run_simulation(2, 2, 3)
+    
+    # 3. 异步示例
+    var async_example = AsyncExample()
+    await async_example.run_concurrent_tasks()
+    await async_example.run_http_requests()
+    await async_example.async_generator_example()
+    
+    # 4. 池示例
+    var pool_example = PoolExample()
+    pool_example.run_thread_pool_example()
+    pool_example.run_process_pool_example()
+    
+    # 5. 高级并发模式
+    var advanced_example = AdvancedConcurrency()
+    advanced_example.run_semaphore_example()
+    advanced_example.run_condition_example()
+    
+    # 6. 异步上下文管理器
+    await async_context_example()
+    
+    # 7. 任务管理
+    await task_management_example()
+    
+    print("所有并发和并行编程示例完成!")
+
+func main() {
+    """主函数"""
+    # 运行异步主函数
+    asyncio.run(async_main())
+}
+
+# 运行主函数
+if __name__ == "__main__" {
+    main()
+}
